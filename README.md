@@ -2,6 +2,6 @@
 General structure:
 - code
 - references
-- thesis
   - review
   - dynamics
+- thesis
