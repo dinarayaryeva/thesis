@@ -1,0 +1,17 @@
+
+\chapter{Introduction}
+
+In past robots used to work separately from humans, as most robots were used in fully automated productions without the need for human operator. Nowadays, however, robots work more closely and often in the same space as humans. This subsequently leads to the need to consider the interaction between humans and machines. In many operations both humans and robots can engage in Human-Machine Interactions (HMI), most notably in exoskeletons, robotic hands, haptic interfaces, which are designed to be directly interacting with a human, as well as many others.
+
+While working so closely with these robots in the same space safety becomes a primary concern. Safety is usually achieved through two most common methods as described in \cite{eval_of_safety}:
+\begin{enumerate}
+    \item design of the robot as well as its actuator;
+    \item estimation and control of the force factors in the HMI.
+\end{enumerate}
+The design of the robot's actuator is vital to the overall safety of the system. Most common drive types tend to have high stiffness, which is a common risk that potentially lead to a mechanical injury in HMI. These drives also often have high impedance and varying transmission ratio, and therefore make robots dangerous in operation. Better impedance and stiffness refine the stability, precision and control accuracy under payload disturbances. This creates a demand for robot drives either with a natural stiffness and a naturally low impedance or with a predetermined way to estimate the external torques and react to them appropriately.
+
+An alternate to the common drives considered in this work, namely the Twisted String Actuator (TSA), has a transmission ratio that decreases overtime resulting in a low impedance and low stiffness. These characteristics render it safe in HMI. Moreover, in this work we will use the TSA as well as consider methods of force factor estimation to ensure safety in HMI.
+
+The most common way to estimate external torques is to install force sensors. However, they significantly increase production costs and the robotic system's weight especially on multiple DOF systems. A much cheaper yet no less effective way - is to implement a sensorless disturbance observer capable of force estimation using only proprioceptive sensors and robot's and actuator's configurations.
+
+While force estimation has been thoroughly studied \cite{collision}, \cite{momentum_obs}, \cite{sliding_mode}, to my knowledge they were not applied to robotic systems based on TSAs. This paper aims to implement various mentioned force estimation algorithms for TSA robotics. The observers are tested on an experimental setup and later compared to determine the most efficient and the most accurate one, hence justifying the importance and novelty of this work.
