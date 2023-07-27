@@ -1,127 +1,323 @@
-\chapter{Methodology}
+\chapter{Mathematical Model}
 \label{chap:lr}
 \chaptermark{Second Chapter Heading}
 
-% ____________ include an overview of methodology ___________
-In this chapter we will discuss the control strategy of a TSA driven setup consisting of a single string. To design all considered methods of force estimation (based on the increases of the motor current, Classic momentum observer and Sliding Mode momentum observer) a mathematical model of the TSA is required, which is discussed in Section I. Using the configuration of the TSA and proprioceptive measures (motor angular displacement $\theta$, string's linear displacement $X$ and their respective velocities $\dot \theta, \dot X$ or both options whenever convenient), we can find the system's Jacobian $\mathbb{J}$, dynamics, the total energy $E$ of TSA and its Lagrangian $L$. The Jacobian and the dynamics of the system are needed for all considered methods  The Lagrangian is used to obtain the time differential of the generalized momentum $\dot p$, which is a key component in the Classical Momentum Observer and Sliding Mode Momentum Observers. 
+\section*{Modelling}
 
-The design of classical momentum observer is presented in Section II, where the general strategy of obtaining the momentum's residual and using it to estimate external torque is discussed \cite{coll_avoid}. After which, the external force can be found using the obtained torque and the Jacobian of the system.
+    Remotely operated vehicles (ROVs) are complex systems that require accurate mathematical models for various purposes, including control system design, simulation, and performance analysis.
+    In order to effectively model these vehicles, it is crucial to consider their rigid body dynamics, frames of reference, kinematics, and dynamics.\\
+    ROV is typically treated as a single rigid body in six degrees of freedom (DOF). 
+    The six DOF represent the vehicle's motion in three translational directions (surge, sway, and heave) and three rotational directions (roll, pitch, and yaw). 
+    By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics of the system.
+    The fundamentals of the modelling for marine vehicles as a rigid bodies were described in Fossen().
+    
+    \subsection*{Notations}
 
-Based on the classical variant, in Section III a Sliding Mode Disturbance Observer is designed to improve the force control model by disposing of a phase lag in the estimated external torque signal caused by the momentum observer's first-order characteristic \cite{sliding_mode}.
+    Before the start of all derivations, it is reasonable to ensure the use of common notations.
+    For the motion with six DOF, it is necessary to define six independent coordinates.
+    Futher explanations in this work will be based on the notation of The Society of Naval Architects and Marine Engineers (SNAME) introduced the 1950 for marine vessels (Fig. \ref{table:sname}), 
+    which is widely used in marine engineering.
 
-
-\section{Mathematical Model of TSA}
-
-Before we touch on the subject of force estimation and momentum observers, it is vital to overview the mathematical model of the TSA used in the experimental setup. A more detailed model that considers all other TSA features is described in works \cite{TSA_intro}, \cite{TSA_oscillations}, \cite{TSA_math_model}.
-
-
-\subsection{Kinematics}
-    In accordance with the approximate image of the section of the twisted string shown in Fig.1(a), the cable with length $L$, radius $r$ twisted by angle $\theta$ forms a spiral and contracts linearly by $X$.
-    This section unwraps into a right-angled triangle with sides $(L-X)$, $L$ and $\theta r$, where: 
-    \begin{equation}
-        L^2 = (L-X)^2 + \theta^2r^2
-    \end{equation}
-    Note here that equation above is a second order polynomial, therefore there exist two solutions for motor angle $\theta$ that correspond to the same string contraction level $X$.
-
-    The differentiation of the constraint above with respect to time yields the relationship between the payload (output) and motor (input) velocities:
-    \begin{equation}
-        \dot X = \mathbb{J}(\theta, X) \dot \theta
-    \end{equation}
-    where $\mathbb{J}$ is the Jacobian of twisted strings:
-    \begin{equation}
-        \mathbb{J} = \frac{\theta r^2}{L-X} = \frac{\theta r^2}{\sqrt{L^2 - \theta^2 r^2}} = \frac{r\sqrt{L^2 - (L-X)^2}}{L-X}
-    \end{equation}
-
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.6\linewidth]{figs/schematic_model.png}
-        \caption{Schematic diagrams for the analysis of TSA kinematics (a) and dynamics (b)}
-        \label{fig:tsa_diagram}
+    \begin{figure}[H]
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline DOF & & $\begin{array}{c}\text { Forces and } \\
+            \text { Moments }\end{array}$ & $\begin{array}{c}\text { Linear and } \\
+            \text { Angular velocity }\end{array}$ & $\begin{array}{c}\text { Positions and } \\
+            \text { Euler Angles }\end{array}$ \\
+            \hline
+            1 & Surge & $X$ & $u$ & $x$ \\
+            2 & Sway & $Y$ & $v$ & $y$ \\
+            3 & Heave & $Z$ & $w$ & $z$ \\
+            4 & Roll & $K$ & $p$ & $\phi$ \\
+            5 & Pitch & $M$ & $q$ & $\theta$ \\
+            6 & Yaw & $N$ & $r$ & $\psi$ \\
+            \hline
+        \end{tabular}
+        \caption{SNAME notation}
+        \label{table:sname}
     \end{figure}
 
+\subsection*{Frames of reference}
 
-\subsection{Energy}
+    In order to derive the kinematics and dynamics of the system, the calculations need to be projected to the same frame of reference.
+    Sometimes it is more convinient to define several coordinate frames based on the system parameters and the measurements.
+    These frames are the earth-fixed frame, which is considered to be inertial and its origin is fixed, and the body-fixed frame, which is a moving frame fixed to the vehicle, as depicted in (Fig. \ref{image:frames}). 
+    \begin{figure}[H]
+        \centering\includegraphics*[width=0.5\textwidth]{frames}
+        \caption{The frames}
+        \label{image:frames}
+    \end{figure}
 
-The energy of the TSA can be represented with respect to the motor angle $\theta$, string's linear contraction $X$ or both, depending on the availability and convenience of motor and payload variables. Total energy of TSA is the sum of the system's kinetic, potential and dissipated energies:
-\begin{equation}
-    E = E_K + E_P + E_D = \frac{1}{2}I\dot\theta^2 + (\frac{1}{2}m\dot X^2 + mgX) + E_D
-\end{equation}
-where $I$ is the motor's inertia and $g$ is the gravitational constant. 
-Using the kinetic $E_K$ and potential $E_P$ energies a Lagrangian $L$ can be derived as:
-\begin{equation}
-    L = E_K - E_P = \frac{1}{2}I\dot \theta^2 - \frac{1}{2}m\dot{X}^2 - mgX
-\end{equation}
+    The origin of the body-fixed frame usually coincides with the vehicle's center of mass,
+     and the axes of this frame are chosen along the vehicle's principle axes of inertia.
 
+    Using the SNAME notation we could define the position and the velocity vectors:    
+    $$
+    \begin{aligned}
+    & \eta=\left[\begin{array}{llllll}
+        x & y & z & \phi & \theta & \psi
+        \end{array}\right]^{\top} \\
+    & \nu=\left[\begin{array}{llllll}
+    u & v & w & p & q & r
+    \end{array}\right]^{\top} \\
+    \end{aligned}
+    $$
+    Here $\eta$ denotes the position and orientation vector in the earth-fixed frame, 
+    $\nu$ denotes the linear and angular velocity vector in the body-fixed frame.
 
-\subsection{Dynamics}
-The robot dynamics can be defined using a Lagrangian approach:
-\begin{equation}
-    M(q)\ddot q + C(q,\dot q)\dot q + g(q) = \tau_m + \tau_{ext}
-\end{equation}
-where $q$ is the set of generalized coordinates; $M(q)>0$ is the symmetric positive definite inertia matrix;  $g(q)$ is the gravity vector; $\tau_m$ is the motor torque; $\tau_{ext}$ is the external torque$C(q,\dot q)$ is the Coriolis matrix satisfying the passivity property:
-\begin{equation}
-    \dot M(q) = C(q,\dot q) +  C(q,\dot q)^T 
-\end{equation}
-
-The Equations of Motion (EoM) can be derived using the Euler-Lagrange approach of TSA as follows:
-\begin{equation}
-    \begin{cases}
-        \tau_m = I\ddot \theta + \mathbb{J}T + b_{\theta}\dot \theta + \tau_{ext} \\
-        T = m\ddot X +mg+ b_X\dot X + F_{ext}
-    \end{cases}
-\end{equation}
-where  $T$ - string's tension; $b_{\theta}, b_X$ - viscous friction coefficients in motor and payload, respectively; $\tau_{ext}$ and $F_{ext}$ - external disturbances.
-
-Notice, that since the considered robotic system is a 1-DOF (degree of freedom) system with one string, external forces can be derived from external torques using the system's Jacobian:
-\begin{equation}
-    \tau_{ext} = \mathbb{J}F_{ext}
-\end{equation}
-
-The EoM can be rewritten with respect to motor angle as follows:
-\begin{equation}
-    \begin{cases}
-        \tau_m = M_{\theta} \ddot\theta + h_{\theta}(q,\dot q)\\
-        M_{\theta} = I + m\mathbb{J}^2\\
-        h_{\theta} = (b_{\theta}+\mathbb{J}(m \dot{\mathbb{J}} + b_X))\dot\theta + \mathbb{J} (mg + F_{ext})+\tau_{ext}
-        
-    \end{cases}
-\end{equation}
-
-Similarly, we rewrite the dynamics with respect to payload as follows:
-\begin{equation}
-    \begin{cases}
-        \tau_m = M_{X} \ddot X + h_{X}(q,\dot q)\\
-        M_{X} = I + m\mathbb{J}^{-2}+m\\
-        h_{X} = (\math{J}^{-1}b_{\theta}+\mathbb{J}^{-2} \dot{\mathbb{J}}I+ b_X)\dot X + \mathbb{J} (mg + F_{ext})+\tau_{ext}
-        
-    \end{cases}
-\end{equation}
-
-
-\section{Classical Momentum Observer}
-
-    The derivation of all momentum observers is based on the timely evolution of the generalized momentum of the robot \cite{collision}. Since momentum $p$ is the derivative of the Lagrangian $L$ with respect to generalized velocities $\dot q$, using Euler-Lagrange Equation, we can express the time derivative of the momentum $\dot p$:
-\begin{equation}
-    \frac{d}{dt}(\frac{\delta L}{\delta \dot q}) - \frac{\delta L}{\delta q} = \tau_{ext}
-\end{equation}
+    % Furthermore, we could define separate linear and angular components of position and velocity.\\
+    % $$
+    % \mathbf{p}=\left[\begin{array}{l}
+    % x \\
+    % y \\
+    % z
+    % \end{array}\right], \quad \mathbf{v}=\left[\begin{array}{l}
+    % u \\
+    % v \\
+    % w
+    % \end{array}\right], \Theta=\left[\begin{array}{l}
+    % \phi \\
+    % \theta \\
+    % v
+    % \end{array}\right], \quad \omega=\left[\begin{array}{l}
+    % p \\
+    % q \\
+    % r
+    % \end{array}\right]
+    % $$
+    % where $p \in \mathbb{R}^{3 x 1}$ is the linear position, $v \in \mathbb{R}^{3 x 1}$ is the linear velocity, $\theta \in \mathbb{R}^{3 x 1}$ is the angular position. $\omega \in \mathbb{R}^{3 r 1}$ is the angular velocity.
+    % The force vectors acting ob the body can be seen in equation ().\\
+    % $$
+    % \begin{aligned}
+    %     \tau=\left[\begin{array}{llllll}
+    %     X & Y & Z & K & M & N
+    %     \end{array}\right]^{\top} \\
+    % \end{aligned}
+    % $$
+    % where $\tau \in \mathbb{R}^{6 x 1}$ defined in the body-fixed frame.\\
+    In order to deal further with the vector transformations between these two frames 
+    it is necessary to define cross product operators:\\
+    $S(\lambda)$ is a skew-symmetric matrix defined such that:
+    $$
+    S(\lambda)=\left[\begin{array}{ccc}
+        0 & -\lambda_3 & \lambda_2 \\
+        \lambda_3 & 0 & -\lambda_1 \\
+        -\lambda_2 & \lambda_1 & 0
+    \end{array}\right]
+    $$ therefore $S(u)v = u \times v$ for vectors v,u $\in \mathbb{R}^{3}$ \\
+    $\bar{\times}^*$ is the $\mathbb{R}^{6}$ cross product operator defined as: \\
     
+    $
+    \nu\bar{\times}^*=\left[\begin{array}{ll}
+        S(\omega) & 0_{3 \times 3} \\
+        S(v) & S(\omega)
+    \end{array}\right]
+    $ where $\nu = \left[\begin{array}{l}
+        v \\
+        \omega
+    \end{array}\right]$
 
-\begin{equation} 
-    \dot p = \frac{\delta L}{\delta q} + \mathbb{J}F_{ext}
-\end{equation}
-where the par
+\subsection*{Kinematics}
+
+    Kinematics describes the motion of the marine vehicle without considering the forces acting upon it.
+    In order to describe motion of the body, it is necessary to connect velocities in two frames with linear transformations as:
+    $$
+    \begin{aligned}
+        & \dot{\eta}=J(\eta) \nu \\
+        \text{where } & J(\eta)=\left[\begin{array}{cc}
+        R(\eta) & 0_{3 \times 3} \\
+        0_{3 \times 3} & T(\eta)
+        \end{array}\right]
+    \end{aligned}
+    $$
+    where the $R$ matrix is the linear transformation matrix and the $T$ matrix is the rate transformation matrix. 
+    These two matrices can be expressed in terms of Euler angles, but it will cause the singularity. 
+    Another way of representing orientation to avoid singularity would be quaternions.
+    The quaternion kinematic equations for the marine vehicle can be expressed as follows:
+    $$
+    \begin{aligned}
+    & \boldsymbol{R}(\boldsymbol{q})=\left[\begin{array}{ccc}
+        1-2\left(q_3^2+q_4^2\right) & 2\left(q_2 q_3-q_4 q_1\right) & 2\left(q_2 q_4+q_3 q_1\right) \\
+        2\left(q_2 q_3+q_4 q_1\right) & 1-2\left(q_2^2+q_4^2\right) & 2\left(q_3 q_4-q_2 q_1\right) \\
+        2\left(q_2 q_4-q_3 q_1\right) & 2\left(q_3 q_4+q_2 q_1\right) & 1-2\left(q_2^2+q_3^2\right)
+        \end{array}\right]\\
+    & \boldsymbol{T}(\boldsymbol{q})=\frac{1}{2}\left[\begin{array}{rrr}
+        q_1 & -q_4 & q_3 \\
+        q_4 & q_1 & -q_2 \\
+        -q_3 & q_2 & q_1 \\
+        -q_2 & -q_3 & -q_4
+        \end{array}\right]
+    \end{aligned}
+    $$
+    while state quaternion $q$ is expressed in scalar-first form as 
+    $q = q_1 + q_2\cdot i + q_3\cdot j + q_4\cdot k$
+
+\subsection*{Model dynamics}
+
+    The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
+    This approach relates the applied forces and moments to the vehicle's accelerations and angular accelerations.
+    The equations of motion using the Newton-Euler approach in the body-fixed frame can be written as:
+    $$
+    M\dot\nu+\nu\bar{\times}^*M\nu=f
+    $$
+    where M represents the inertia matrix of the rigid body and 
+    f represents the total force acting on it.\\
+    The system of equations can be transformed into matrix form:
+    $$
+     \mathbf{M}_{R B} \dot{\nu}+\mathbf{C}_{R B}(\nu) \nu
+    =\tau_{R B}
+    $$
+    where
+    $M_{R B} \in \mathbb{R}^{6 x 6}$ is the rigid body mass matrix,
+    $C_{R B}(\nu) \in \mathbb{R}^{6 x 6}$ is the rigid body Coriolis and centripetal forces matrix,
+    $\tau_{R B} \in \mathbb{R}^{6 x 1}$ is the generalized vector of external forces and torques.
+    
+    To refine the dynamics model, additional terms need to be included to account for various factors. 
+    These terms include added mass, which represents the inertia of the surrounding fluid, 
+    the shift of the center of buoyancy due to changes in trim and heel angles, 
+    and damping effects. 
+    By incorporating these terms into the manipulator equation derived from the Newton-Euler approach, 
+    the model becomes more accurate and reflects the true behavior of the marine vehicle.    
+
+\subsection*{Center of Gravity and Center of Buyonancy}
+    
+    Due to the robust design of the marine vehicles, the center of mass(COM) placed lower than the center of byonancy(COB).
+    This shift betweent centers causes torque acting against capsize (Fig. \ref{image:scheme}).\\
+    \begin{figure}[H]
+        \centering\includegraphics*[width=0.5\textwidth]{01_srb}
+        \caption{The vehicle scheme}
+        \label{image:scheme}
+    \end{figure}
+    If we place the origin of the body frame at byonancy center, the mass matrix can be expressed as:\\
+    $$
+    M_{R B}=\left[\begin{array}{cc}
+        m I_{3 \times 3} & -m S\left(r_G\right) \\
+        m S\left(r_G\right) & I_0
+    \end{array}\right]
+    $$
+    where $r_G$ is the vector of the gravity center in the body frame.\\
+    The same applies to the Coriolis matrix:
+    $$
+    C_{R B}(\nu) =\left[\begin{array}{cc}
+        S(\omega) & 0_{3 \times 3} \\
+        S(v) & S(\omega)
+    \end{array}\right]\left[\begin{array}{cc}
+        m I_{3 \times 3} & -m S\left(r_G\right) \\
+        m S\left(r_G\right) & I_0
+    \end{array}\right]
+    $$
+    These matrices can be further simplified, using an assumption that x and y shifts equal zero. 
+\subsection*{Concept of added mass}
+
+    Since the vehicle moves in a viscous enviroment, we can not neglect the inertia of the surrounging liquid.
+    To compensate added mass effect, it is necessary to add two components into dynamics equation.\\
+    Using SNAME(1950) notation, we can define dynamical parameters of our body as:
+    $$
+    Y_{\dot{u}} \triangleq \frac{\partial Y}{\partial \dot{u}}
+    $$
+    Consequently the added mass matrix $M_A$ and 
+    the Coriolis forces matrix for added mass $C_A(\nu)$
+    can be expressed as: 
+    $$
+    \begin{aligned}
+        & M_A=\left[\begin{array}{cc}
+            A_{11} & A_{12} \\
+            A_{21} & A_{22}
+            \end{array}\right]=-\operatorname{diag}\left\{X_{\dot{u}}, Y_{\dot{v}}, Z_{\dot{w}}, K_{\dot{p}}, M_{\dot{q}}, N_{\dot{r}}\right\} \\
+        & C_A(\nu)=\left[\begin{array}{cc}
+        0_{3 \times 3} & -S\left(A_{11} v+A_{12} \omega\right) \\
+        -S\left(A_{11} v+A_{12} \omega\right) & -S\left(A_{21} v+A_{22} \omega)\right.
+        \end{array}\right]
+    \end{aligned}
+    $$
+
+\subsection*{Hydrodynamic Damping}
+
+    Generally, the dynamics of underwater vehicles can be highly nonlinear and coupled.
+    Nevetheless, during the slow non-coupled motion the damping can be approximated to linear and quadratic damping:
+    $$\begin{aligned}
+        & D(\nu)=-\operatorname{diag}\left\{X_u, Y_v, Z_w, K_p, M_q, N_r\right\} \\
+        & \quad-\operatorname{diag}\left\{X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|\right\}
+    \end{aligned}
+    $$
+
+\subsection*{Restoring forces}
+The weight of the body is defined as: $W=m g$, 
+while the buoyancy force is defined as: $B=\rho g \nabla$. 
+By transforming the weight and buoyancy force to the body-fixed frame, we get:
+
 $$
-    \frac{\delta L}{\delta q} = I\dot{\theta}\ddot{\theta} - m\dot{X}\ddot{X} - mg\dot X
+f_G\left(\eta\right)=R^{\top}\left(\eta\right)\left[\begin{array}{l}
+0 \\
+0 \\
+W
+\end{array}\right] \quad f_B\left(\eta\right)=-R^{\top}\left(\eta\right)\left[\begin{array}{l}
+0 \\
+0 \\
+B
+\end{array}\right]
+$$
+Therefore, overall restoring force and moment vector is:
+$$
+g(\eta)=-\left[\begin{array}{c}
+f_G(\eta)+f_B(\eta) \\
+r_G \times f_G(\eta)+r_B \times f_B(\eta)
+\end{array}\right]
 $$
 
-    The derivation of the classic first-order momentum observer is based on the residual
-\begin{equation}
-    \textbf{r} = K_O( p - \int_0^t{(\frac{\delta L}{\delta q} + r)}ds - p_0 )
-\end{equation}
-    where $p_0$ is the initial value of the generalized momentum and $K_O = diag(k_O, i)>0$.
+\subsection*{Matrix representation}
 
-    By using the acquired $\dot p$, the time derivative of the residual is:
-\begin{equation}
-    \dot r = -K_O(r - \tau_{ext})
-\end{equation}
-This means that residual $r$ is a first-order filtered version of $\tau_{ext}$ and therefore it can be used as an estimation of the external torques and subsequently external forces using (3.9).
+The final expression for the mathematical model is:
+$$
+\begin{cases}
+& M \dot{\nu}+C(\nu) \nu+D(\nu) \nu+g(\eta)=\tau \\
+& \dot{\eta}=J(\eta) \nu
+\end{cases}
+$$
+where
+$M=M_{R B}+M_A$, $C(\nu)=C_{R B}(\nu)+C_A(\nu)$
+
+\subsection*{Thrusters modelling}
+
+In the general case, the thruster force and moment vector will be 
+a complicated function depending on the vehicle's velocity vector $\nu$, 
+voltage of the power source V 
+and the control variable $u$.
+This relationship can be expressed as:
+$$
+\tau=Bb(\nu, V, u)
+$$
+where $B$ is a control mapping matrix and
+$b(\cdot)$ is a nonlinear vector function.
+
+\subsection*{BlueRov modelling (will be placed in a different chapter (?))}
+
+By the specification of the given thrusters, the dependency between control 
+PWM signal and thrust is highly nonlinear
+(Fig. \ref{image:thrust}).\\
+\begin{figure}[H]
+    \centering\includegraphics*[width=0.8\textwidth]{thrusters}
+    \caption{}
+    \label{image:thrust}
+\end{figure}
+In order to model this relation, the polynomial regression was applied on the normalized test data. 
+A 5th-order approximation of the developed thrust at 16V voltage will be:
+$
+\tau = - 0.22 u^5
+- 0.0135 u^4
++ 1.1 u^3
++ 0.172 u^2
++ 1.327 u 
++ 0.027
+$\\
+The inverse dependency can be determined in the same way. 
+The following expression is obtained :
+$
+u = 0.0006 \tau^5 
+- 0.0004 \tau^4 
+- 0.02 \tau^3
++ 0.0006 \tau^2 
++ 0.56 \tau
+-0.0334
+$\\
+\href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
