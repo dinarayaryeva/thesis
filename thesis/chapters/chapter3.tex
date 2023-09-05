@@ -1,17 +1,21 @@
 \chapter{Mathematical Model}
-\label{chap:lr}
+\label{chap:mat}
+
 \chaptermark{Second Chapter Heading}
 
-\section*{Modelling}
+
+\section{Modelling}
+
 
     Remotely operated vehicles (ROVs) are complex systems that require accurate mathematical models for various purposes, including control system design, simulation, and performance analysis.
     In order to effectively model these vehicles, it is crucial to consider their rigid body dynamics, frames of reference, kinematics, and dynamics.\\
     ROV is typically treated as a single rigid body in six degrees of freedom (DOF). 
     The six DOF represent the vehicle's motion in three translational directions (surge, sway, and heave) and three rotational directions (roll, pitch, and yaw). 
     By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics of the system.
-    The fundamentals of the modelling for marine vehicles as a rigid bodies were described in Fossen().
+    The fundamentals of the modelling for marine vehicles were described in Fossen().
     
-    \subsection*{Notations}
+    \subsection{Notations}
+
 
     Before the start of all derivations, it is reasonable to ensure the use of common notations.
     For the motion with six DOF, it is necessary to define six independent coordinates.
@@ -37,10 +41,10 @@
         \label{table:sname}
     \end{figure}
 
-\subsection*{Frames of reference}
+\subsection{Frames of reference}
 
     In order to derive the kinematics and dynamics of the system, the calculations need to be projected to the same frame of reference.
-    Sometimes it is more convinient to define several coordinate frames based on the system parameters and the measurements.
+    Sometimes it is more convinient to define several coordinate frames based on the system parameters and measurements.
     These frames are the earth-fixed frame, which is considered to be inertial and its origin is fixed, and the body-fixed frame, which is a moving frame fixed to the vehicle, as depicted in (Fig. \ref{image:frames}). 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{frames}
@@ -117,7 +121,7 @@
         \omega
     \end{array}\right]$
 
-\subsection*{Kinematics}
+\subsection{Kinematics}
 
     Kinematics describes the motion of the marine vehicle without considering the forces acting upon it.
     In order to describe motion of the body, it is necessary to connect velocities in two frames with linear transformations as:
@@ -152,7 +156,7 @@
     while state quaternion $q$ is expressed in scalar-first form as 
     $q = q_1 + q_2\cdot i + q_3\cdot j + q_4\cdot k$
 
-\subsection*{Model dynamics}
+\subsection{Model dynamics}
 
     The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
     This approach relates the applied forces and moments to the vehicle's accelerations and angular accelerations.
@@ -179,7 +183,7 @@
     By incorporating these terms into the manipulator equation derived from the Newton-Euler approach, 
     the model becomes more accurate and reflects the true behavior of the marine vehicle.    
 
-\subsection*{Center of Gravity and Center of Buyonancy}
+\subsection{Center of Gravity and Center of Buyonancy}
     
     Due to the robust design of the marine vehicles, the center of mass(COM) placed lower than the center of byonancy(COB).
     This shift betweent centers causes torque acting against capsize (Fig. \ref{image:scheme}).\\
@@ -207,13 +211,13 @@
     \end{array}\right]
     $$
     These matrices can be further simplified, using an assumption that x and y shifts equal zero. 
-\subsection*{Concept of added mass}
+\subsection{Concept of added mass}
 
     Since the vehicle moves in a viscous enviroment, we can not neglect the inertia of the surrounging liquid.
     To compensate added mass effect, it is necessary to add two components into dynamics equation.\\
     Using SNAME(1950) notation, we can define dynamical parameters of our body as:
     $$
-    Y_{\dot{u}} \triangleq \frac{\partial Y}{\partial \dot{u}}
+    X_{\dot{u}} \triangleq \frac{\partial X}{\partial \dot{u}}
     $$
     Consequently the added mass matrix $M_A$ and 
     the Coriolis forces matrix for added mass $C_A(\nu)$
@@ -231,7 +235,7 @@
     \end{aligned}
     $$
 
-\subsection*{Hydrodynamic Damping}
+\subsection{Hydrodynamic Damping}
 
     Generally, the dynamics of underwater vehicles can be highly nonlinear and coupled.
     Nevetheless, during the slow non-coupled motion the damping can be approximated to linear and quadratic damping:
@@ -241,7 +245,7 @@
     \end{aligned}
     $$
 
-\subsection*{Restoring forces}
+\subsection{Restoring forces}
 The weight of the body is defined as: $W=m g$, 
 while the buoyancy force is defined as: $B=\rho g \nabla$. 
 By transforming the weight and buoyancy force to the body-fixed frame, we get:
@@ -265,7 +269,7 @@ r_G \times f_G(\eta)+r_B \times f_B(\eta)
 \end{array}\right]
 $$
 
-\subsection*{Matrix representation}
+\subsection{Matrix representation}
 
 The final expression for the mathematical model is:
 $$
@@ -277,7 +281,7 @@ $$
 where
 $M=M_{R B}+M_A$, $C(\nu)=C_{R B}(\nu)+C_A(\nu)$
 
-\subsection*{Thrusters modelling}
+\subsection{Thrusters modelling}
 
 In the general case, the thruster force and moment vector will be 
 a complicated function depending on the vehicle's velocity vector $\nu$, 
@@ -290,7 +294,7 @@ $$
 where $B$ is a control mapping matrix and
 $b(\cdot)$ is a nonlinear vector function.
 
-\subsection*{BlueRov modelling (will be placed in a different chapter (?))}
+\subsection{BlueRov modelling (will be placed in a different chapter (?))}
 
 By the specification of the given thrusters, the dependency between control 
 PWM signal and thrust is highly nonlinear

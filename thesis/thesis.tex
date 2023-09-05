@@ -1,12 +1,13 @@
-% \documentclass[oneside]{report}
 \documentclass[oneside,final,14pt,a4paper]{extreport}
-% \documentclass[journal,onecolumn,a4paper,12pt]{IEEEtran}
-\usepackage[T2A]{fontenc}
 
+% set the compiler XeLatex to use fontspec package
+\usepackage{fontspec}
+ 
+\setmainfont{Times New Roman}
 
 \usepackage{vmargin}
 \setpapersize{A4}
-\setmarginsrb{2.5cm}{2cm}{2cm}{2cm}{0pt}{10mm}{0pt}{13mm}
+\setmarginsrb{2.5cm}{2.2cm}{2.2cm}{2.2cm}{0pt}{10mm}{0pt}{13mm}
 \usepackage{setspace}
 \sloppy
 \setstretch{1.5}
@@ -18,6 +19,8 @@
 \renewcommand{\ttdefault}{pcr}
 %%%%% END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \usepackage{atbegshi,picture}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[utf8]{inputenc}
 \AtBeginShipout{\AtBeginShipoutUpperLeft{%
   \put(\dimexpr\paperwidth-1cm\relax,-1.5cm){\makebox[0pt][r]{\includegraphics[width=3cm]{figs/inno}}}%
 }}
@@ -29,6 +32,8 @@
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
 \usepackage{blindtext}
+
+
 \usepackage{pdfpages}
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 \usepackage{amsmath,amsfonts}
@@ -62,9 +67,9 @@
 \usepackage{fancyhdr}
 \usepackage{csquotes}
 \usepackage{color}
-\usepackage{anyfontsize}
-\usepackage{mathptmx}
-\usepackage{t1enc}
+% \usepackage{anyfontsize}
+% \usepackage{mathptmx}
+% \usepackage{t1enc}
 
 \usepackage{chngcntr}
 \usepackage{upgreek} 
@@ -74,7 +79,6 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{longtable}
-\usepackage{adjustbox}
 \usepackage[font=singlespacing, labelfont=bf]{caption}
 \counterwithout{table}{chapter}
 \renewcommand{\thetable}{\Roman{table}}
@@ -130,16 +134,15 @@
 
 \begin{document}
 
-%\includepdf[pages=-]{title.pdf}
-%\tableofcontents
-%\listoftables
-%\listoffigures
+\includepdf[pages=-]{title.pdf}
+\tableofcontents
+\listoftables
+\listoffigures
 
 
 \newpage
-%\include{chapters/abstract}
-% Depend on above part
-\setcounter{page}{1}
+\include{chapters/abstract}
+\setcounter{page}{8} % set manually an actual number from which introduction starts
 \include{chapters/chapter1}
 \include{chapters/chapter2}
 \include{chapters/chapter3}
@@ -149,7 +152,7 @@
 
 
 %% REFERENCES
-%\printbibliography[title={Bibliography cited}]
-
+\printbibliography[heading=bibintoc,title={Bibliography cited}]
+\include{chapters/appex}
 \end{document}
 
