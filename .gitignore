@@ -26,3 +26,5 @@
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+
+code/__pycache__/

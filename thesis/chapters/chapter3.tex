@@ -6,20 +6,28 @@
 
 \section{Modelling}
 
-
-    Remotely operated vehicles (ROVs) are complex systems that require accurate mathematical models for various purposes, including control system design, simulation, and performance analysis.
-    In order to effectively model these vehicles, it is crucial to consider their rigid body dynamics, frames of reference, kinematics, and dynamics.\\
-    ROV is typically treated as a single rigid body in six degrees of freedom (DOF). 
-    The six DOF represent the vehicle's motion in three translational directions (surge, sway, and heave) and three rotational directions (roll, pitch, and yaw). 
-    By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics of the system.
-    The fundamentals of the modelling for marine vehicles were described in Fossen().
+    Remotely operated vehicles (ROVs) are complex systems that require mathematical models for various purposes, 
+    including control system design, simulation, and performance analysis. With accurate mathematical models, 
+    ROVs are able to navigate through different underwater terrains and complete control tasks with a good 
+    precision. Also, the simulation, based on these models, are suitable to test different work scenarios and 
+    detect undesirable ROV's behaviour before the physical experiment. \\    
     
+    The fundamentals of the modelling for marine vehicles were fully described in Fossen().
+    Using common assumptions, ROV is treated as a single rigid body with six degrees of freedom (DOF).
+    By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics 
+    of the system. \\
+
+    In order to effectively model rigid bodies, it is crucial to consider their kinematic and dynamic properties.\\
+
     \subsection{Notations}
 
 
-    Before the start of all derivations, it is reasonable to ensure the use of common notations.
-    For the motion with six DOF, it is necessary to define six independent coordinates.
-    Futher explanations in this work will be based on the notation of The Society of Naval Architects and Marine Engineers (SNAME) introduced the 1950 for marine vessels (Fig. \ref{table:sname}), 
+    Before proceeding to theoretical derivations, it is necessary to define the general notations.
+    For the motion with six DOF, six independent coordinates will be used: 
+    three for translational directions (surge, sway, and heave) and three for rotational directions 
+    (roll, pitch, and yaw).
+    This work will be based on the notation of The Society of Naval Architects and Marine Engineers (SNAME)
+     introduced the 1950 for marine vessels (Fig. \ref{table:sname}), 
     which is widely used in marine engineering.
 
     \begin{figure}[H]
@@ -43,9 +51,12 @@
 
 \subsection{Frames of reference}
 
-    In order to derive the kinematics and dynamics of the system, the calculations need to be projected to the same frame of reference.
-    Sometimes it is more convinient to define several coordinate frames based on the system parameters and measurements.
-    These frames are the earth-fixed frame, which is considered to be inertial and its origin is fixed, and the body-fixed frame, which is a moving frame fixed to the vehicle, as depicted in (Fig. \ref{image:frames}). 
+    In order to derive the kinematics and dynamics of the system, the calculations need to be projected into 
+    the same frame of reference. 
+    Sometimes several coordinate frames are defined based on the system configuration. 
+    For ROV, it is reasonable to define two coordinate frames. 
+    These frames are the earth-fixed frame, which is inertial with fixed origin, and the body-fixed frame, 
+    which is a moving frame attached to the vehicle. as depicted in (Fig. \ref{image:frames}). 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{frames}
         \caption{The frames}
@@ -53,7 +64,7 @@
     \end{figure}
 
     The origin of the body-fixed frame usually coincides with the vehicle's center of mass,
-     and the axes of this frame are chosen along the vehicle's principle axes of inertia.
+     and its axes are chosen along the vehicle's principle axes of inertia.
 
     Using the SNAME notation we could define the position and the velocity vectors:    
     $$
@@ -124,49 +135,50 @@
 \subsection{Kinematics}
 
     Kinematics describes the motion of the marine vehicle without considering the forces acting upon it.
-    In order to describe motion of the body, it is necessary to connect velocities in two frames with linear transformations as:
+    In order to describe kinematic motion of the body, it is necessary find relation between velocities in two coordinate frames.
+    This relation can be represented with linear transformations as:
     $$
     \begin{aligned}
         & \dot{\eta}=J(\eta) \nu \\
         \text{where } & J(\eta)=\left[\begin{array}{cc}
-        R(\eta) & 0_{3 \times 3} \\
+        R(\eta)^{\top} & 0_{3 \times 3} \\
         0_{3 \times 3} & T(\eta)
         \end{array}\right]
     \end{aligned}
     $$
-    where the $R$ matrix is the linear transformation matrix and the $T$ matrix is the rate transformation matrix. 
-    These two matrices can be expressed in terms of Euler angles, but it will cause the singularity. 
-    Another way of representing orientation to avoid singularity would be quaternions.
-    The quaternion kinematic equations for the marine vehicle can be expressed as follows:
+    where the $R$ matrix is the rotational matrix and the $T$ matrix is the rate transformation matrix. 
+    These two matrices can be expressed in terms of Euler angles, but it will eventually cause the singularity. 
+    Quaternion representation can resolve the singularity problem. 
+    The kinematic equations for the marine vehicle using quaternions can be written as follows:
     $$
     \begin{aligned}
     & \boldsymbol{R}(\boldsymbol{q})=\left[\begin{array}{ccc}
-        1-2\left(q_3^2+q_4^2\right) & 2\left(q_2 q_3-q_4 q_1\right) & 2\left(q_2 q_4+q_3 q_1\right) \\
-        2\left(q_2 q_3+q_4 q_1\right) & 1-2\left(q_2^2+q_4^2\right) & 2\left(q_3 q_4-q_2 q_1\right) \\
-        2\left(q_2 q_4-q_3 q_1\right) & 2\left(q_3 q_4+q_2 q_1\right) & 1-2\left(q_2^2+q_3^2\right)
+        1-2\left(q_2^2+q_3^2\right) & 2\left(q_1 q_2-q_3 q_0\right) & 2\left(q_1 q_3+q_2 q_0\right) \\
+        2\left(q_1 q_2+q_3 q_0\right) & 1-2\left(q_1^2+q_3^2\right) & 2\left(q_2 q_3-q_1 q_0\right) \\
+        2\left(q_1 q_3-q_2 q_0\right) & 2\left(q_2 q_3+q_1 q_0\right) & 1-2\left(q_1^2+q_2^2\right)
         \end{array}\right]\\
     & \boldsymbol{T}(\boldsymbol{q})=\frac{1}{2}\left[\begin{array}{rrr}
-        q_1 & -q_4 & q_3 \\
-        q_4 & q_1 & -q_2 \\
-        -q_3 & q_2 & q_1 \\
-        -q_2 & -q_3 & -q_4
+        -q_1 & -q_2 & -q_3 \\
+        q_0 & -q_3 & q_2 \\
+        q_3 & q_0 & -q_1 \\
+        -q_2 & q_1 & q_0
         \end{array}\right]
     \end{aligned}
     $$
     while state quaternion $q$ is expressed in scalar-first form as 
-    $q = q_1 + q_2\cdot i + q_3\cdot j + q_4\cdot k$
+    $q = q_0 + q_1\cdot i + q_2\cdot j + q_3\cdot k$
 
 \subsection{Model dynamics}
 
     The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
     This approach relates the applied forces and moments to the vehicle's accelerations and angular accelerations.
-    The equations of motion using the Newton-Euler approach in the body-fixed frame can be written as:
+    The general equation of motion using the Newton-Euler approach in the body-fixed frame can be written as:
     $$
     M\dot\nu+\nu\bar{\times}^*M\nu=f
     $$
     where M represents the inertia matrix of the rigid body and 
     f represents the total force acting on it.\\
-    The system of equations can be transformed into matrix form:
+    The equation can be transformed into manupulator equation like:
     $$
      \mathbf{M}_{R B} \dot{\nu}+\mathbf{C}_{R B}(\nu) \nu
     =\tau_{R B}
@@ -176,16 +188,16 @@
     $C_{R B}(\nu) \in \mathbb{R}^{6 x 6}$ is the rigid body Coriolis and centripetal forces matrix,
     $\tau_{R B} \in \mathbb{R}^{6 x 1}$ is the generalized vector of external forces and torques.
     
-    To refine the dynamics model, additional terms need to be included to account for various factors. 
-    These terms include added mass, which represents the inertia of the surrounding fluid, 
-    the shift of the center of buoyancy due to changes in trim and heel angles, 
-    and damping effects. 
+    However, additional terms should be included in the equation to determine the specifics of the ROVs model. 
+    These terms comprise added mass, which represents the inertia of the surrounding fluid, the shift of the 
+    center of buoyancy due to changes in trim and heel angles, and damping effects. 
     By incorporating these terms into the manipulator equation derived from the Newton-Euler approach, 
-    the model becomes more accurate and reflects the true behavior of the marine vehicle.    
+    the model becomes more accurate and reflects the natural behavior of the ROV.    
 
 \subsection{Center of Gravity and Center of Buyonancy}
     
-    Due to the robust design of the marine vehicles, the center of mass(COM) placed lower than the center of byonancy(COB).
+    Due to the robust design of the marine vehicles, the center of mass(COM) is placed lower than the center 
+    of byonancy(COB).
     This shift betweent centers causes torque acting against capsize (Fig. \ref{image:scheme}).\\
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{01_srb}
@@ -210,7 +222,7 @@
         m S\left(r_G\right) & I_0
     \end{array}\right]
     $$
-    These matrices can be further simplified, using an assumption that x and y shifts equal zero. 
+    These matrices can be further simplified, using an assumption that x and y shifts equal zero due to the symmetry. 
 \subsection{Concept of added mass}
 
     Since the vehicle moves in a viscous enviroment, we can not neglect the inertia of the surrounging liquid.
@@ -235,93 +247,103 @@
     \end{aligned}
     $$
 
+    The dynamical parameters should be measured experimentally.
+
 \subsection{Hydrodynamic Damping}
 
     Generally, the dynamics of underwater vehicles can be highly nonlinear and coupled.
-    Nevetheless, during the slow non-coupled motion the damping can be approximated to linear and quadratic damping:
+    Nevertheless, during the slow non-coupled motion the damping can be approximated to linear and quadratic damping:
     $$\begin{aligned}
         & D(\nu)=-\operatorname{diag}\left\{X_u, Y_v, Z_w, K_p, M_q, N_r\right\} \\
         & \quad-\operatorname{diag}\left\{X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|\right\}
     \end{aligned}
     $$
 
-\subsection{Restoring forces}
-The weight of the body is defined as: $W=m g$, 
-while the buoyancy force is defined as: $B=\rho g \nabla$. 
-By transforming the weight and buoyancy force to the body-fixed frame, we get:
+    Again, appropriate values of dynamical parameters can be discovered through several tests.
 
-$$
-f_G\left(\eta\right)=R^{\top}\left(\eta\right)\left[\begin{array}{l}
-0 \\
-0 \\
-W
-\end{array}\right] \quad f_B\left(\eta\right)=-R^{\top}\left(\eta\right)\left[\begin{array}{l}
-0 \\
-0 \\
-B
-\end{array}\right]
-$$
-Therefore, overall restoring force and moment vector is:
-$$
-g(\eta)=-\left[\begin{array}{c}
-f_G(\eta)+f_B(\eta) \\
-r_G \times f_G(\eta)+r_B \times f_B(\eta)
-\end{array}\right]
-$$
+\subsection{Restoring forces}
+
+    Common sense is to neglect all other forces acting on the vehicle except buoyancy and gravity. 
+    Although the motion of the current can also affect the dynamics, it is unpredictable and highly nonlinear, 
+    which makes it easier to compensate through control.
+    The weight of the body is defined as: $W=m g$, 
+    while the buoyancy force is defined as: $B=\rho g \nabla$. 
+    By transforming the weight and buoyancy force to the body-fixed frame, we get:
+
+    $$
+    f_G\left(\eta\right)=R^{\top}\left(\eta\right)\left[\begin{array}{l}
+    0 \\
+    0 \\
+    W
+    \end{array}\right] \quad f_B\left(\eta\right)=-R^{\top}\left(\eta\right)\left[\begin{array}{l}
+    0 \\
+    0 \\
+    B
+    \end{array}\right]
+    $$
+    Therefore, overall restoring force and moment vector is:
+    $$
+    g(\eta)=-\left[\begin{array}{c}
+    f_G(\eta)+f_B(\eta) \\
+    r_G \times f_G(\eta)+r_B \times f_B(\eta)
+    \end{array}\right]
+    $$
 
 \subsection{Matrix representation}
 
-The final expression for the mathematical model is:
-$$
-\begin{cases}
-& M \dot{\nu}+C(\nu) \nu+D(\nu) \nu+g(\eta)=\tau \\
-& \dot{\eta}=J(\eta) \nu
-\end{cases}
-$$
-where
-$M=M_{R B}+M_A$, $C(\nu)=C_{R B}(\nu)+C_A(\nu)$
+    The final expression for the mathematical model is:
+    $$
+    \begin{cases}
+    & M \dot{\nu}+C(\nu) \nu+D(\nu) \nu+g(\eta)=\tau \\
+    & \dot{\eta}=J(\eta) \nu
+    \end{cases}
+    $$
+    where
+    $M=M_{R B}+M_A$, $C(\nu)=C_{R B}(\nu)+C_A(\nu)$
 
-\subsection{Thrusters modelling}
+    \subsection{Thrusters modelling}
 
-In the general case, the thruster force and moment vector will be 
-a complicated function depending on the vehicle's velocity vector $\nu$, 
-voltage of the power source V 
-and the control variable $u$.
-This relationship can be expressed as:
-$$
-\tau=Bb(\nu, V, u)
-$$
-where $B$ is a control mapping matrix and
-$b(\cdot)$ is a nonlinear vector function.
+    In the general case, the thruster force and moment vector will be 
+    a complicated function depending on the vehicle's velocity vector $\nu$, 
+    voltage of the power source V 
+    and the control variable $u$.
+    This relationship can be expressed as:
+    $$
+    \tau=T()K()u
+    $$
+    % add parameters
+    where $T \in \mathbb{R}^{6 x 8}$ is the control configuration matrix that maps body torques to thuster forces, 
+    $K \in \mathbb{R}^{8 x 8}$ is the thrust coefficient function that defines relation between
+    PWM signal and output force.
 
-\subsection{BlueRov modelling (will be placed in a different chapter (?))}
+    \subsection{BlueRov modelling (will be placed in a different chapter (?))}
 
-By the specification of the given thrusters, the dependency between control 
-PWM signal and thrust is highly nonlinear
-(Fig. \ref{image:thrust}).\\
-\begin{figure}[H]
-    \centering\includegraphics*[width=0.8\textwidth]{thrusters}
-    \caption{}
-    \label{image:thrust}
-\end{figure}
-In order to model this relation, the polynomial regression was applied on the normalized test data. 
-A 5th-order approximation of the developed thrust at 16V voltage will be:
-$
-\tau = - 0.22 u^5
-- 0.0135 u^4
-+ 1.1 u^3
-+ 0.172 u^2
-+ 1.327 u 
-+ 0.027
-$\\
-The inverse dependency can be determined in the same way. 
-The following expression is obtained :
-$
-u = 0.0006 \tau^5 
-- 0.0004 \tau^4 
-- 0.02 \tau^3
-+ 0.0006 \tau^2 
-+ 0.56 \tau
--0.0334
-$\\
-\href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
+    By the specification of the given thrusters, the dependency between control 
+    PWM signal and thrust is highly nonlinear
+    (Fig. \ref{image:thrust}).\\
+    \begin{figure}[H]
+        \centering\includegraphics*[width=0.8\textwidth]{thrusters}
+        \caption{}
+        \label{image:thrust}
+    \end{figure}
+    In order to model this relation, the polynomial regression was applied on the normalized test data. 
+    A 5th-order approximation of the developed thrust at 16V voltage will be:
+    $
+    \tau = - 0.22 u^5
+    - 0.0135 u^4
+    + 1.1 u^3
+    + 0.172 u^2
+    + 1.327 u 
+    + 0.027
+    $\\
+    The inverse dependency can be determined in the same way. 
+    The following expression is obtained :
+    $
+    u = 0.0006 \tau^5 
+    - 0.0004 \tau^4 
+    - 0.02 \tau^3
+    + 0.0006 \tau^2 
+    + 0.56 \tau
+    -0.0334
+    $\\
+    \href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}

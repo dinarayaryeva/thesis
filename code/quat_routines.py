@@ -124,7 +124,7 @@ def quat2rot(Q):
     # Third row of the rotation matrix
     r20 = 2 * (q1 * q3 - q0 * q2)
     r21 = 2 * (q2 * q3 + q0 * q1)
-    r22 = q0 ** 2 - q1 ** 2 - q2 ** 2 + q3 ** 3
+    r22 = q0 ** 2 - q1 ** 2 - q2 ** 2 + q3 ** 2
     # r22 = 1 - 2*q1**2 - 2 * q2**2
 
     # 3x3 rotation matrix
