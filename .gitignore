@@ -28,3 +28,4 @@
 *.pdfsync
 
 code/__pycache__/
+code/ffmpeg.exe
