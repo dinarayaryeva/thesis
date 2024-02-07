@@ -1,0 +1,13 @@
+name: mj_sim
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - numpy=1.23.*
+  - sympy
+  - quaternion
+  - ipykernel
+  - pip:
+    - mujoco
+    - matplotlib
