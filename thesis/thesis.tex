@@ -2,8 +2,7 @@
 
 % set the compiler XeLatex to use fontspec package
 \usepackage{fontspec}
- 
-\setmainfont{Times New Roman}
+\setmainfont[Mapping=tex-text]{Times New Roman}
 
 \usepackage{vmargin}
 \setpapersize{A4}
@@ -32,7 +31,6 @@
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
 \usepackage{blindtext}
-
 
 \usepackage{pdfpages}
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
@@ -134,25 +132,25 @@
 
 \begin{document}
 
-\includepdf[pages=-]{title.pdf}
+% \includepdf[pages=-]{title.pdf}
 \tableofcontents
-\listoftables
-\listoffigures
+% \listoftables
+% \listoffigures
 
 
 \newpage
-\include{chapters/abstract}
-\setcounter{page}{8} % set manually an actual number from which introduction starts
-\include{chapters/chapter1}
+% \include{chapters/abstract}
+\setcounter{page}{1} % set manually an actual number from which introduction starts
+% \include{chapters/chapter1}
 \include{chapters/chapter2}
 \include{chapters/chapter3}
-\include{chapters/chapter4}
-\include{chapters/chapter5}
-\include{chapters/chapter6}
+% \include{chapters/chapter4}
+% \include{chapters/chapter5}
+% \include{chapters/chapter6}
 
 
 %% REFERENCES
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
-\include{chapters/appex}
+% \include{chapters/appex}
 \end{document}
 
