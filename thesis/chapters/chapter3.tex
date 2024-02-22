@@ -1,10 +1,9 @@
-\chapter{Mathematical Model}
+\chapter{Mathematical Modelling}
 \label{chap:mat}
 
-\chaptermark{Second Chapter Heading}
+\chaptermark{Third Chapter Heading}
 
-
-\section{Modelling}
+% chapter intro?
 
     Remotely operated vehicles (ROVs) are complex systems that require mathematical models for various purposes, 
     including control system design, simulation, and performance analysis. With accurate mathematical models, 
@@ -12,14 +11,14 @@
     precision. Also, the simulation, based on these models, are suitable to test different work scenarios and 
     detect undesirable ROV's behaviour before the physical experiment. \\    
     
-    The fundamentals of the modelling for marine vehicles were fully described in Fossen().
+    The fundamentals of the modelling for marine vehicles were fully described in Fossen \cite{fossen:guidance}.
     Using common assumptions, ROV is treated as a single rigid body with six degrees of freedom (DOF).
     By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics 
     of the system. \\
 
     In order to effectively model rigid bodies, it is crucial to consider their kinematic and dynamic properties.\\
 
-    \subsection{Notations}
+\section{Notations}
 
 
     Before proceeding to theoretical derivations, it is necessary to clarify the general notations.
@@ -97,7 +96,7 @@
         \omega
     \end{array}\right]$
 
-\subsection{Frames of reference}
+\section{Frames of reference}
 
     In order to derive the kinematics and dynamics of the system, the calculations need to be projected into 
     the same frame of reference. 
@@ -117,7 +116,7 @@
 
     In further derivations, the state variables of the rigid body expressed in the body-fixed frame would be noted by $^B$ and in the earth-fixed frame by $^N$.
 
-\subsection{Kinematics}
+\section{Kinematics}
 
     Kinematics describes the motion of the marine vehicle without considering the forces acting upon it.
     In order to describe kinematic motion of the body, it is necessary to find relation between velocities in two coordinate frames.
@@ -149,7 +148,7 @@
     \end{aligned}
     $$
 
-\subsection{Model dynamics}
+\section{Model dynamics}
 
     The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
     This approach relates the applied forces and moments to the vehicle's accelerations and angular accelerations.
@@ -281,7 +280,7 @@
     where
     $M=M_B+M_A$, $C(\bar{v}^B)=C_B(\bar{v}^B)+C_A(\bar{v}^B)$
 
-    \subsection{Thrusters modelling}
+\section{Thrusters modelling}
 
     In the general case, the thruster force and moment vector will be 
     a complicated function depending on the vehicle's velocity vector $\bar{v}^B$, 
@@ -292,10 +291,10 @@
     \bar{f}^B=T\phi(u)
     $$
     where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix that maps body torques to thuster forces, 
-    $K \in \mathbb{R}^{n x n}$ is the DC-gain transfer function that defines relation between
+    $\phi(u) \in \mathbb{R}^{n x n}$ is the DC-gain transfer function that defines relation between
     PWM signal and output force, where n - number of thrusters.
 
-    \subsection{BlueRov modelling (will be placed in a different chapter (?))}
+\section{BlueRov modelling (will be placed in a different chapter (?))}
 
     By the specification of the given thrusters, the dependency between control 
     PWM signal and thrust is highly nonlinear

@@ -1,4 +1,235 @@
-\chapter{Control}
+\chapter{Methodology}
 \label{chap:ctrl}
+
+\chaptermark{Forth Chapter Heading}
+
+% robust control
+% viscousity
+% thrusters
+% control lyapunov function
+
+\chaptermark{Third Chapter Heading}
+
+% Chapter intro
+
+\section{Control design}
+
+\todo{Introduce the concept of sliding mode control (SMC) and 
+its advantages for controlling underwater robots.}
+
+
+As discussed in the previous chapter, there are several controller 
+designs available. However, the sliding mode approach suggested by \temp{(Spong - ?)}
+is highly regarded as the most sophisticated and frequently implemented one. 
+
+Sliding mode control (SMC) is a nonlinear control method that guarantees 
+robust control of systems with uncertainties and disturbances. 
+This technique involves developing a sliding surface within the state 
+space and directing the system's trajectory to slide along this surface (Fig. \ref{image:sliding_mode}).
+
+\begin{figure}[H]
+    \centering\includegraphics*[width=0.5\textwidth]{sliding_mode}
+    \caption{The sliding mode scheme}
+    \label{image:sliding_mode}
+\end{figure}
+
+
+Underwater robots face a range of challenges, including ocean currents, waves, 
+and sensor noise. Fortunately, SMC provides a reliable and 
+stable solution to these issues, making it an excellent choice for underwater 
+robotics.
+
+Additionally, SMC is known for its ability to respond quickly and accurately track desired 
+trajectories, even in the presence of disturbances. This is particularly important 
+for underwater robots that must navigate, dock, and manipulate objects.
+
+Compared to other nonlinear control methods, SMC is a relatively straightforward 
+solution to implement. With a basic understanding of system dynamics and sliding 
+surface design.
+
+\temp{the Leitmann approach - ?}
+
+\subsection{Problem Formulation}
+
+\todo{Define the underwater robot system dynamics.\\}
+The final system dynamics is represented as:
+$$
+M \dot{\bar{v}}^B + C(\bar{v}^B)\bar{v}^B + D(\bar{v}^B)\bar{v}^B + g(\bar{r}^N)= \bar{f}^B
+$$
+
+\todo{Define control objectives\\}
+Underwater robots require precise control systems to navigate and operate effectively
+in challenging marine environments. These control objectives are crucial for ensuring
+the robot's stability, accuracy, and responsiveness:
+\begin{itemize}
+    \item Position and Orientation Tracking: 
+    The robot must accurately follow a desired trajectory, maintaining its position 
+    and orientation as intended.
+    \item Disturbance Rejection: 
+    The robot should be able to withstand external disturbances, such as ocean 
+    currents, waves, and sensor noise, to maintain stable tracking performance.
+    \item Robustness: 
+    The control system should be robust to uncertainties in the robot's dynamics 
+    and environmental conditions, ensuring reliable operation even in unpredictable 
+    situations.
+    \item Real-Time Implementation: 
+    The control algorithm should be computationally efficient and able to run in 
+    real-time on the robot's embedded system, enabling prompt and effective 
+    responses to changing conditions.
+\end{itemize}
+
+\temp{Derive the state-space representation of the system - ?}
+
+\todo{Identify the uncertainties and disturbances affecting the system.\\}
+The dynamics parameter estimates may be imprecise due to unmodeled dynamics and external 
+factors. This means the estimated values might not perfectly match the actual system behavior.\\
+$\hat x$ indicates the approximate value of parameter $x$, while 
+the estimation error is defined as $\tilde x = \hat x - x$.
+
+\temp{State which parameters are unknown to us - ?}
+
+\subsection{Sliding Surface Design}
+\todo{Explain the concept of a sliding surface and its role in SMC.\\}
+In sliding mode control (SMC), a sliding surface is a hyperplane in 
+the state space that defines the desired system behavior. In SMC, the 
+sliding surface is designed to be an invariant set.
+
+Invariant sets are sets of states in the state space that, once entered,
+cannot be exited under the action of the control law.\\
+For an invariant set $\mathbb{S}$ the following is valid:\\
+if $x(t_0) \in \mathbb{S}$ 
+then $x(t) \in \mathbb{S}$ for $\forall t > t_0 $\\
+\temp{
+Sliding surface is invariant set if it satisfies the sliding condition:
+$$
+\frac{1}{2}\frac{d}{dt}s^2 = - \eta |s|
+$$}
+The control objective is to force the system's trajectory to slide 
+long this surface. Once the system's trajectory reaches the sliding surface, 
+it will remain on the surface as long as the control law is applied.
+
+The sliding surface provides robustness to uncertainties and 
+disturbances by ensuring that the system's behavior is insensitive 
+to these factors. This is because the control law is designed to counteract any 
+disturbances or uncertainties that would push the trajectory off 
+the surface. As long as the system's trajectory remains on the 
+sliding surface, the control system will maintain stability and 
+performance.
+
+Therefore, the initial tracking problem $\bar{r}^B = \bar{r}_{des}^B$
+ is equivalent to remaining on the surface $\mathbb{S}$ or $s(t) = 0$ for $\forall t > t_0$.
+
+\todo{Derive the sliding surface for the underwater robot system.\\}
+General sliding surface for the system is:
+$$
+s = (\frac{d}{dt} + \lambda)^{n-1}\tilde r^B = \tilde v^B + \lambda \tilde r^B
+$$
+where $n$ is the order of the system.
+
+\todo{Analyze the properties of the sliding surface, 
+such as reachability and invariance\\}
+The design of the sliding surface is critical for the performance of the SMC system. The sliding surface should be:
+\begin{itemize}
+    \item Reachable: The system's trajectory should be able to reach the sliding surface in a finite amount of time.
+    \item Invariant: Once the system's trajectory reaches the sliding surface, it should remain on the surface for all future time.
+    \item Attractive: The control law should attract the system's trajectory to the sliding surface and keep it there.
+\end{itemize}
+\temp{Global invariant set theorem - ?}
+
+\subsection{Control Law Design}
+
+\todo{Derive the SMC control law for the underwater robot system.\\}
+In order to find a minimum of $s$, which corresponds to the minimal tracking error,
+let us take a time derivative:
+$$
+\dot{s} = \dot{\tilde v}^B + \lambda \dot {\tilde r}^B = 
+    \dot{\hat v}^B - \dot{v}^B + \lambda v^B = 0
+$$
+Substituting the system dynamics, it would give us the following equation:
+$$
+\dot{s} = - M^{-1}(C(v^B)v^B + 
+    D(v^B)v^B + g(r^N) - f^B) - \dot{v}^B + \lambda {v}^B = 0 
+$$
+Note that inertia matrix $M$ is always invertible by the construction.\\
+The final expression for control force is:
+$$
+f^B = - Ma + C(v^B)v^B + D(v^B)v^B + g(r^N)
+$$
+where $a = \dot{v}^B + \lambda v^B$ is outer-loop control.
+
+\temp{
+In order to form a linear closed-loop system, we will choose control input according to: 
+$$
+\bar{f}^B = \hat M {a} +
+            \hat C(\bar{v}^B)\bar{v}^B +
+            \hat D(\bar{v}^B)\bar{v}^B + 
+            \hat g(\bar{r}^N)
+$$
+where ${a}$ is outer-loop control to be designed further. 
+}
+
+% double integrator
+\temp{
+If we substitute () into (), we will get double integrator system in a form:
+$$
+\dot{\bar{v}}^B = a + \eta (\bar{r}^N, \dot{\bar{v}}^B, a)
+$$
+where the uncertainty function $\eta$ is defined as $$\eta (\bar{r}^N, \dot{\bar{v}}^B, a) = 
+                                        M^{-1}(\tilde M {a} +
+                                        \tilde C(\bar{v}^B)\bar{v}^B +
+                                        \tilde D(\bar{v}^B)\bar{v}^B + 
+                                        \tilde g(\bar{r}^N))$$
+}
+\temp{
+% outer-loop control
+In order to ensure global stability of the system, the outer loop control $a$ designed in a way:
+$$
+a = a_{des}(t) - K_0v - K_1 r - \delta \alpha
+$$
+where $\delta \alpha = \begin{cases}
+    \rho\frac{e}{|e|} , & \text{if } |e| > 0 \\
+    0, & \text{if } |e| = 0 
+\end{cases}$
+}
+
+\temp{Define the error e - ?}
+
+\temp{
+% outer-loop control
+In order to reduce chattering, the boundary layer is introduced as:\\
+$\delta \alpha = \begin{cases}
+    \rho\frac{e}{|e|} , & \text{if } |e| \geq \epsilon \\
+    \frac{\rho}{\epsilon}e, & \text{if } |e| < \epsilon 
+\end{cases}$\\
+where $\epsilon$ is the boundary thickness.
+}
+
+\begin{figure}[H]
+    \centering\includegraphics*[width=0.8\textwidth]{boundary}
+    \caption{The sliding mode scheme with boundary layer}
+    \label{image:boundary}
+\end{figure}
+
+\todo{Analyze the stability of the closed-loop system under SMC.\\}
+% lyapunov candidate
+In order to prove global stability of the system, let the Lyapunov candicate will be:
+$$
+V = q^TPq
+$$
+Let us take the time derivative, we will get
+$$
+\dot V = ...
+$$
+
+% LaSalle theorem
+However, we need to discover if $\dot V = 0$ even while $e \neq 0$. 
+According to LaSalle theorem ...
+
+\subsection{Summary}
+
+\todo{Summarize the main findings of the chapter.}
+
+\todo{Discuss the limitations and potential extensions of the SMC 
+controller.}
 
 
