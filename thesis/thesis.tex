@@ -123,6 +123,13 @@
       {\fancyplain{}{\bf\rightmark}}
 \cfoot{} %bfseries
 
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize%
+    \setlength\abovedisplayskip{2pt}%
+    \setlength\belowdisplayskip{2pt}%
+    \setlength\abovedisplayshortskip{-8pt}%
+    \setlength\belowdisplayshortskip{2pt}%
+}
 
 \newcommand{\dedication}[1]
    {\thispagestyle{empty}
@@ -143,15 +150,15 @@
 % \include{chapters/abstract}
 \setcounter{page}{1} % set manually an actual number from which introduction starts
 % \include{chapters/chapter1}
-\include{chapters/chapter2}
-\include{chapters/chapter3}
+% \include{chapters/chapter2}
+% \include{chapters/chapter3}
 \include{chapters/chapter4}
 % \include{chapters/chapter5}
 % \include{chapters/chapter6}
 
 
 %% REFERENCES
-\printbibliography[heading=bibintoc,title={Bibliography cited}]
+% \printbibliography[heading=bibintoc,title={Bibliography cited}]
 % \include{chapters/appex}
 \end{document}
 
