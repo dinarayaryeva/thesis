@@ -3,25 +3,23 @@
 
 \chaptermark{Third Chapter Heading}
 
-% chapter intro?
-
+    \temp{Chapter intro +  motivation}
     Remotely operated vehicles (ROVs) are complex systems that require mathematical models for various purposes, 
     including control system design, simulation, and performance analysis. With accurate mathematical models, 
     ROVs are able to navigate through different underwater terrains and complete control tasks with a good 
     precision. Also, the simulation, based on these models, are suitable to test different work scenarios and 
-    detect undesirable ROV's behaviour before the physical experiment. \\    
+    detect undesirable ROV's behaviour before the physical experiment.   
     
+    \temp{SRB}
     The fundamentals of the modelling for marine vehicles were fully described in Fossen \cite{fossen:guidance}.
     Using common assumptions, ROV is treated as a single rigid body with six degrees of freedom (DOF).
     By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics 
-    of the system. \\
+    of the system.
 
-    In order to effectively model rigid bodies, it is crucial to consider their kinematic and dynamic properties.\\
-
+    In order to effectively model rigid bodies, it is crucial to consider their kinematic and dynamic properties.
 \section{Notations}
 
-
-    Before proceeding to theoretical derivations, it is necessary to clarify the general notations.
+    Before proceeding to theoretical derivations, it is necessary to clarify the notations.
     For the motion with six DOF, six independent coordinates are defined in the coordinate frame: 
     three for translational directions (surge, sway, and heave) and three for rotational directions 
     (roll, pitch, and yaw) as depicted in (Fig. \ref{image:6dof})
@@ -32,12 +30,11 @@
         \label{image:6dof}
     \end{figure}
 
-    The linear position is defined as $r = [r_x, r_y, r_z]^\top$ for translation along xyz axis respectively,
-    while orientation can be expressed in terms of Euler angles around corresponding axis. 
-    But Euler angles will eventually lead to the singularity 
-    when sway angle is $± 90^{\circ}$. 
-    However, the quaternions can resolve this problem by adding redundancy into the representation. 
-    The orientation quaternion is defined in scalar-first form as 
+    The linear position of the body is defined as $r = [r_x, r_y, r_z]^\top$ for translation along xyz axis respectively.
+    The orientation can be expressed in terms of Euler angles around corresponding axis, it will eventually lead 
+    to the singularity when sway angle is $± 90^{\circ}$. 
+    The quaternions can resolve this problem by adding redundancy into the representation. 
+    The quaternion is defined in scalar-first form as 
     $q = q_0 + q_1\cdot i + q_2\cdot j + q_3\cdot k = [q_0, q_1, q_2, q_3]^\top$
 
     For each direction, the velocity vectors can be defined separately: 
@@ -45,18 +42,18 @@
     $\omega = [\omega_x, \omega_y, \omega_z]^\top$ for rotation around xyz axis respectively.
     The same applies to linear forces $f$ and torques $\tau$.
 
-    To summarize, the general notations look like:
+    To summarize, the notations look like:
 
     \begin{figure}[H]
     \begin{tabular}{ccc}
-        \hline Notation & Description & Dimentionality\\
+        \hline Symbol & Description & Dimentionality\\
         \hline
-        $r$ & Linear position vector & $\in \mathbb{R}^{3}$ \\
-        $q$ & Angular position (orientation) vector & $\in \mathbb{R}^{4}$\\
-        $v$ & Linear velocity vector & $\in \mathbb{R}^{3}$\\
-        $\omega$ & Angular velocity vector & $\in \mathbb{R}^{3}$\\
-        $f$ & Vector of linear forces& $\in \mathbb{R}^{3}$ \\
-        $\tau$ & Vector of torques& $\in \mathbb{R}^{3}$ \\
+        $r$ & Linear position vector & $\mathbb{R}^{3}$ \\
+        $q$ & Angular position (orientation) vector & $\mathbb{R}^{4}$\\
+        $v$ & Linear velocity vector & $\mathbb{R}^{3}$\\
+        $\omega$ & Angular velocity vector & $\mathbb{R}^{3}$\\
+        $f$ & Vector of linear forces& $\mathbb{R}^{3}$ \\
+        $\tau$ & Vector of torques& $\mathbb{R}^{3}$ \\
         \hline
         \end{tabular}
         \caption{Notation}
@@ -64,7 +61,7 @@
     \end{figure}
 
     For the convenience, it is desirable to define combined vectors of positions, velocities and forces as:
-    $\bar{q} = \left[\begin{array}{ll}
+    $\bar{r} = \left[\begin{array}{ll}
         r \\
         q
     \end{array}\right]$, $\bar{v} = \left[\begin{array}{ll}
@@ -75,26 +72,23 @@
         \tau
     \end{array}\right]$
 
-    In order to manipulate with obtained vectors, it is necessary to define cross product operators:\\
-    $S(\lambda)$ is a skew-symmetric matrix defined such that:
+    \temp{Cross product notation}
+    In order to manipulate with obtained vectors, it is necessary to define cross product operators.
+    For vectors in $\mathbb{R}^{3}$ the cross product is multiplication by skew-symmetric matrix $S(\lambda)$:
     $$
     S(\lambda)=\left[\begin{array}{ccc}
         0 & -\lambda_3 & \lambda_2 \\
         \lambda_3 & 0 & -\lambda_1 \\
         -\lambda_2 & \lambda_1 & 0
     \end{array}\right]
-    $$ therefore $S(u)v = u \times v$ for vectors v,u $\in \mathbb{R}^{3}$ \\
-    $\bar{\times}^*$ is the $\mathbb{R}^{6}$ cross product operator defined as: \\
-    
-    $
+    $$
+    While for vectors in $\mathbb{R}^{6}$ $\bar{\times}^*$ is the cross product operator defined as:
+    $$
     \bar{v}\bar{\times}^*=\left[\begin{array}{ll}
         S(\omega) & 0_{3 \times 3} \\
         S(v) & S(\omega)
     \end{array}\right]
-    $ where $\bar{v} = \left[\begin{array}{ll}
-        v \\
-        \omega
-    \end{array}\right]$
+    $$
 
 \section{Frames of reference}
 
@@ -114,7 +108,8 @@
     The origin of the body-fixed frame usually coincides with the vehicle's center of mass,
      and its axes are chosen along the vehicle's principle axes of inertia.
 
-    In further derivations, the state variables of the rigid body expressed in the body-fixed frame would be noted by $^B$ and in the earth-fixed frame by $^N$.
+    The state variables of the rigid body expressed in the body-fixed frame would be 
+    denoted by $^B$ and in the earth-fixed frame by $^N$.
 
 \section{Kinematics}
 
@@ -130,8 +125,7 @@
         \end{array}\right]
     \end{aligned}
     $$
-    where the $R$ is the rotational matrix and the $T$ is the transformation matrix. 
-    The kinematic equations for the marine vehicle using quaternions can be written as follows:
+    The rotational matrix $R$ and the transformation matrix $T$ using quaternions can be expressed as follows:
     $$
     \begin{aligned}
     & R(q)=\left[\begin{array}{ccc}
@@ -151,14 +145,14 @@
 \section{Model dynamics}
 
     The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
-    This approach relates the applied forces and moments to the vehicle's accelerations and angular accelerations.
+    This approach relates the applied forces and moments to the vehicle's linear and angular accelerations.
     The general equation of motion using the Newton-Euler approach in the body-fixed frame can be written as:
     $$
     M\dot{\bar{v}}^B+\bar{v}^B\bar{\times}^*M\bar{v}^B=\bar{f}^B
     $$
-    where $M$ represents the inertia matrix of the rigid body and 
-    $\bar{f}$ represents the total force acting on it.\\
-    The equation can be transformed into manupulator equation like:
+    where $M$ represents the inertia matrix of the rigid body.
+
+    The equation above can be further transformed \todo{why?} into standard manupulator equation form:
     $$
      M_B \dot{\bar{v}}^B+C_B(\bar{v}^B) \bar{v}^B
     = \bar{f}^B
@@ -167,7 +161,7 @@
     $M_B \in \mathbb{R}^{6 x 6}$ is the rigid body mass matrix,
     $C_B(\bar{v}^B) \in \mathbb{R}^{6 x 6}$ is the rigid body Coriolis and centripetal forces matrix.
 
-    However, additional terms should be included in the equation to determine the specifics of the ROVs model. 
+    Nevertheless, some additional terms should be included in the equation to determine the specifics of the ROVs model. 
     These terms comprise added mass, which represents the inertia of the surrounding fluid, the shift of the 
     center of buoyancy due to changes in trim and heel angles, and damping effects. 
     By incorporating these terms into the manipulator equation derived from the Newton-Euler approach, 
@@ -175,39 +169,35 @@
 
 \subsection{Center of Gravity and Center of Buyonancy}
     
-    Due to the robust design of the marine vehicles, the center of byonancy(COB) is usually alligned with
-    the center of mass(COM), but placed higher.
-    This shift between centers causes torque acting against the capsize (Fig. \ref{image:scheme}).\\
+    Due to the robust design of the marine vehicles, the center of byonancy (COB) is usually alligned with
+    the center of mass (COM), but placed higher.
+    This shift between centers causes torque acting against the capsize (Fig. \ref{image:scheme}).
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{01_srb}
         \caption{The vehicle scheme}
         \label{image:scheme}
     \end{figure}
     
-    If we place the origin of the body frame at the center of mass(COM), the mass matrix can be expressed as:\\
+    If we place the origin of the body frame at the center of mass, the mass matrix can be expressed as:
     $$
     M_B=\left[\begin{array}{cc}
         m I_{3 \times 3} & -m S\left(r_G^B\right) \\
         m S\left(r_G^B\right) & I_0
     \end{array}\right]
     $$
-    where $r_G^B$ is the vector of the gravity center in the body frame, that is eventually zero vector.\\
-    The same applies to the Coriolis matrix:
-    $$
-    C_B(\bar{v}^B) =\left[\begin{array}{cc}
-        S(\omega^B) & 0_{3 \times 3} \\
-        S(v^B) & S(\omega^B)
-    \end{array}\right]\times M_B
-    $$
+    where $r_G^B$ is the vector of the gravity center in the body frame, that is eventually a zero vector.
+
 \subsection{Concept of added mass}
 
     Since the vehicle moves in a viscous enviroment, we can not neglect the inertia of the surrounging liquid.
-    To compensate added mass effect, it is necessary to add two components into dynamics equation.\\
+    To compensate added mass effect, it is necessary to add two components into dynamics equation: 
+    the added mass and the Coriolis forces acting on the added mass.
+
     We can define vector of dynamical parameters of our body as:
     $$
     f_{\dot{v}} \triangleq \frac{\partial \bar{f}}{\partial \dot{\bar{v}}}
     $$
-    Consequently the added mass matrix $M_A$ and 
+    Consequently, the added mass matrix $M_A$ and 
     the Coriolis forces matrix for added mass $C_A(v^B)$
     can be expressed as: 
     $$
@@ -224,8 +214,8 @@
     $$
 
     The values of dynamical parameters are usually determined
-    empirically. The error on $M_A$ and $C_A$ can be quite large and we will not consider
-    these matrices in the model for the control.
+    empirically. Therefore, the error on $M_A$ and $C_A$ can be quite large and we will not consider
+    these matrices in our model implementation for the control design.
 
 \subsection{Hydrodynamic Damping}
 
@@ -242,12 +232,12 @@
 
     The common sense is to neglect all other forces acting on the vehicle except buoyancy and gravity. 
     Although the motion of the current can also affect the dynamics, it is unpredictable and highly nonlinear, 
-    which makes it easier to compensate through control.\\
+    which makes it easier to compensate through control.
+
     The weight of the body is defined as: $W=m g$, where $m$ is the vehicle's mass and $g$ is the gravity acceleration. 
     The buoyancy force is defined as: $B=\rho g \nabla$, where $\rho$ is the water density and $\nabla$ the volume of fluid displaced by the vehicle. 
     
     By transforming the weight and buoyancy force to the body-fixed frame, we get:
-
     $$
     f_G\left(\bar{r}^N\right)=R^{\top}\left(\bar{r}^N\right)\left[\begin{array}{l}
     0 \\
@@ -282,6 +272,8 @@
 
 \section{Thrusters modelling}
 
+    \todo{\#TODO Add more info. Explain the simplification}
+
     In the general case, the thruster force and moment vector will be 
     a complicated function depending on the vehicle's velocity vector $\bar{v}^B$, 
     voltage of the power source V 
@@ -290,15 +282,16 @@
     $$
     \bar{f}^B=T\phi(u)
     $$
-    where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix that maps body torques to thuster forces, 
-    $\phi(u) \in \mathbb{R}^{n x n}$ is the DC-gain transfer function that defines relation between
-    PWM signal and output force, where n - number of thrusters.
+    where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix, which maps body torques to thuster forces, 
+    $\phi(u) \in \mathbb{R}^{n x n}$ is the DC-gain transfer function, which defines relation between
+    PWM signal and output force.
 
-\section{BlueRov modelling (will be placed in a different chapter (?))}
+\section{BlueRov modelling \todo{will be placed in a different chapter?}}
+
+    \todo{\#TODO Check the coefficients. Fix the simulation.}
 
     By the specification of the given thrusters, the dependency between control 
-    PWM signal and thrust is highly nonlinear
-    (Fig. \ref{image:thrust}).\\
+    PWM signal and thrust is highly nonlinear (Fig. \ref{image:thrust}).
     \begin{figure}[H]
         \centering\includegraphics*[width=0.8\textwidth]{thrusters}
         \caption{}
@@ -325,3 +318,7 @@
     -0.0334
     $$
     \href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
+
+\section{Summary}
+
+    \todo{\#TODO Make a summary of the chapter}

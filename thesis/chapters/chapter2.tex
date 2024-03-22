@@ -3,112 +3,130 @@
 
 \chaptermark{Second Chapter Heading}
 
-This chapter presents a comprehensive overview of existing research on remotely operated vehicles (ROVs), 
-focusing on modeling and control design. This literature review aims to investigate and synthesize 
-control strategies, addressing uncertainties from actuator dynamics and environmental factors, which 
+This chapter presents a comprehensive overview of existing research on remotely operated vehicles (ROVs),
+focusing on modeling and control design. This literature review aims to investigate and synthesize
+control strategies, addressing uncertainties from actuator dynamics and environmental factors, which
 correspond to the proposed research question.
 
-Section 1 gives a brief description of ROVs, including their types and general attributes. 
-Section 2 explains the commonly accepted assumptions and mathematical models used in the field. 
-Section 3 offers an extensive review of various studies on the application of robust control 
-design for underwater systems. In conclusion, Section 4 summarizes the key insights from the review 
+Section 1 gives a brief description of ROVs, including their types and general attributes.
+Section 2 explains the commonly accepted assumptions and mathematical models used in the field.
+Section 3 offers an extensive review of various studies on the application of robust control
+design for underwater systems. In conclusion, Section 4 summarizes the key insights from the review
 and suggests a control methodology.
 
 \section{Overview on ROVs}
+\todo{\#TODO Add more sorces and get more info about ROVs.}
 
-This section provides an overview of ROVs, from their classification and applications to their 
-inherent characteristics and challenges. The obtained knowledge forms a basis for ROV modeling 
-and control design.
+    This section provides an overview of ROVs, from their classification and applications to their
+    inherent characteristics and challenges. The obtained knowledge forms a basis for ROV modeling
+    and control design.
 
-According to \cite{rov_review}, an ROV's mechanical structure consists of a monitoring camera, a sensor 
-for gathering navigation data, and actuators for directional control. A 
-comparative study \cite{overview} found that the physical aspects that affect ROV functions are the accuracy of 
-sensor systems and the thruster designs. The unpredictable nature of underwater currents, drag, 
-and buoyancy dynamics can also have a serious impact on a ROV's performance, complicating model 
-design.
+    \temp{ROV physics -> complex model design}
+    According to \cite{rov_review}, an ROV's mechanical structure consists of a monitoring camera, a sensor
+    for gathering navigation data, and actuators for directional control. A
+    comparative study \cite{overview} found that the physical aspects that affect ROV functions are the accuracy of
+    sensor systems and the thruster designs. The unpredictable nature of underwater currents, drag,
+    and buoyancy dynamics can also have a serious impact on a ROV's performance, complicating model
+    design.
 
-Several studies \cite{rov_review, overview} have identified that ROVs have become crucial for industrial applications, 
-offshore oil and gas exploration, patrolling, and surveillance. Therefore, its control system 
-should focus on position tracking and station keeping in the presence of parameter and environmental uncertainties, addressing the following issues.
+    \temp{Small ROVs are more preferrable -> wide range applications}
+    A recent systematic review \cite{inspection_review} concluded that there are two primary classifications for ROVs based
+    on their functions and intended use: observation class and work class. Observation class vehicles
+    are typically small and limited to shallow waters with propulsion power up to a few kilowatts. Work
+    class vehicles can perform heavy-duty work, requiring significant hardware
+    system complexity. Thus, when the functionality of these large
+    ROVs is not necessary, a smaller ROV is preferred for a wide range of applications.
 
-A recent systematic review \cite{inspection_review} concluded that there are two primary classifications for ROVs based 
-on their functions and intended use: observation class and work class. Observation class vehicles 
-are typically small and limited to shallow waters with propulsion power up to a few kilowatts. Work 
-class vehicles can perform heavy-duty work, requiring significant hardware 
-system complexity. Thus, when the functionality of these large 
-ROVs is not necessary, a smaller ROV is preferred for a wide range of applications.
+    \temp{Applications of ROV -> control objectives}
+    Several studies \cite{rov_review, overview} have identified that ROVs have become crucial for industrial applications,
+    offshore oil and gas exploration, patrolling, and surveillance. Therefore, its control system
+    should focus on position tracking and station keeping in the presence of parameter and environmental uncertainties, addressing the following issues.
+
+    \todo{\#TODO Add connection to modelling, wrap it up}
 
 \section{Mathematical Modelling}
 
-Remotely operated vehicles require mathematical models for various purposes, including control 
-system design, simulation, and performance analysis.
+    Remotely operated vehicles require mathematical models for various purposes, including control
+    system design, simulation, and performance analysis.
 
-Fossen \cite{fossen:guidance} provided a complete description of the fundamentals of mathematical modeling for water 
-vehicles. In this book, ROV was represented as a 
-single rigid body. The SRB model has drastically simplified the model while capturing the essential 
-dynamics of the system. From a kinematic 
-point of view, ROVs have six degrees of freedom (DoFs). However, the orientation expressed 
-in the rotation angles could eventually lead to the singularity. To solve this issue, 
-\cite{quat_smc} proposed the quaternions representation. The dynamics were derived based on classical 
-physics laws: Newton’s Second Law and Euler-Lagrange equation, forming the set of nonlinear equations.
-The study \cite{identification} simplified the similar dynamics and represented it in a matrix form.
+    \temp{SRB}
+    Thor I. Fossen \cite{fossen:guidance} provided a complete description of the fundamentals of mathematical modeling for marine
+    vehicles. In his book, ROV was represented as a single rigid body (SRB) by considering 
+    it as a solid mass with no internal movement or deformation. The SRB model has drastically simplified the modeling while capturing the essential
+    dynamics of the system. 
 
-However, several sources have established that some aspects of the ROV dynamics require empirical 
-estimates due to their complex, nonlinear, and coupled nature \cite{fossen:guidance, bluerov}. For instance, the inertia 
-of the surrounding fluid cannot be neglected when the vessel moves through a viscous medium. Additionally, water damping is another source of nonlinearity that 
-can be approximated as a function of the velocity. Furthermore, aside from buoyancy and 
-gravity, it is common practice to cancel all other forces acting on a vehicle, although it can also impact the dynamics \cite{bluerov}.
+    \temp{Kinematics and dynamics}
+    From a kinematic
+    point of view, ROVs have six degrees of freedom (DoFs). However, the orientation expressed
+    in the rotation angles could eventually lead to the singularity. To solve this issue,
+    \cite{quat_smc} proposed the quaternions representation. The dynamics was derived based on classical
+    physics laws: Newton’s Second Law and Euler-Lagrange equation, forming the set of nonlinear equations.
+    The study \cite{identification} simplified the equations and represented them in a matrix form.
 
-Moreover, thruster modeling must be applied to define the desired thrust of each thruster. A recent 
-study by \cite{bluerov} stated that creating an accurate thruster model can be challenging due to the 
-influence of factors such as motor models, hydrodynamic effects, and propeller mapping.
+    \temp{Parameter estimation}
+    However, several sources have established that some aspects of the ROV dynamics require empirical
+    estimates due to their complex, nonlinear, and coupled nature \cite{fossen:guidance, bluerov}. For instance, the inertia
+    of the surrounding fluid cannot be neglected when the vessel moves through a viscous medium. Additionally, water damping is another source of nonlinearity that
+    can be approximated as a function of the velocity. Finally, aside from buoyancy and
+    gravity, it is common practice to cancel all other forces acting on a vehicle, although it can also impact the dynamics \cite{bluerov}.
 
-By making these simplifications, the control system cannot independently provide effective control 
-over such uncertain dynamics. Therefore, a robust controller design is necessary for precise ROV 
-position tracking.
+    \temp{Thruster modelling}
+    Moreover, thruster modeling must be applied to define the desired thrust of each thruster. A recent
+    study by \cite{bluerov} stated that creating an accurate thruster model can be challenging due to the
+    influence of factors such as motor models, hydrodynamic effects, and propeller mapping.
+    
+    \temp{Uncertaint model-> control objectives}
+    By making these simplifications, the control system cannot independently provide effective control
+    over such uncertain dynamics. As a result, a robust controller design is necessary for precise ROV
+    position tracking.
 
 \section{Control Solutions}
-% #TODO change to optimal sliding mode control
 
-Controlling an ROV is a complex task that requires a set of processes to stabilize the vehicle and 
-to make it follow the operator's instructions. To ensure the robustness of the system, it is 
-necessary to define a control system that can handle disturbances caused by parameter and 
-environmental changes.
+    \temp{Connect modelling and control}
+    Controlling an ROV is a complex task that requires a set of processes to stabilize the vehicle and
+    to make it follow the operator's instructions. To ensure the robustness of the system, it is
+    necessary to define a control system that can handle disturbances caused by parameter and
+    environmental changes. \\
+    According to \cite{overview}, there are two main challenges associated with ROVs control:
+    \begin{enumerate}
+        \item Unmodeled elements like added mass and hydrodynamic coefficients.
+        \item Highly nonlinear dynamics of the underwater environment which cause significant disturbances to the vehicle.
+    \end{enumerate}
 
-According to \cite{overview}, there are two main challenges associated with ROVs control:
-\begin{enumerate}
-\item Unmodeled elements like added mass and hydrodynamic coefficients.
-\item Highly nonlinear dynamics of the underwater environment which cause significant disturbances to the vehicle.
-\end{enumerate}
+    \temp{Base approach -> SMC}
+    The research on ROV control showed several schemes that can achieve robust stability under
+    variable disturbances. The classical approach applied is sliding mode control (SMC), which was
+    introduced by Slotine \cite{slotine}. SMC is an effective way to address the issues mentioned above and is,
+    therefore, a feasible option for controlling underwater vehicles. However,
+    standard SMC introduces high-frequency signals, which can cause actuator switching and consequently
+    decrease its lifetime.
 
-The recent research on ROV control showed several schemes that can achieve robust stability under 
-variable disturbances. The classical approach applied is sliding mode control (SMC), which was 
-introduced by Slotine \cite{slotine}. SMC is an effective way to address the issues mentioned above and is, 
-therefore, a feasible option for controlling underwater vehicles. However,
-standard SMC introduces high-frequency signals, which can cause actuator switching and consequently 
-decrease its lifetime.
+    \temp{Better SMC variations}
+    \todo{\#TODO Change sources and control approaches}\\
+    The modern SMC interpretations keep the main advantages,
+    thus removing the chattering effects. One of the possible approaches is Adaptive Sliding Mode Control
+    (ASMC) design. \cite{fossen:control} designed an effective hybrid control mechanism for the underwater system that
+    follows a given route, adapting to dynamic disturbances. \cite{adaptive_smc} improved a control system for ROVs,
+    eliminating the need for dynamics linearization. Another way to refine SMC is to add an integral
+    component into the controller equation. The proposed Integral Sliding Mode Control (ISMC) reduced
+    chattering, effectively eliminating the uncertainty of the model parameters \cite{integral_smc}.
 
-The modern SMC interpretations keep the main advantages, 
-thus removing the chattering effects. One of the possible approaches is Adaptive Sliding Mode Control 
-(ASMC) design. \cite{fossen:control} designed an effective hybrid control mechanism for the underwater system that 
-follows a given route, adapting to dynamic disturbances. \cite{adaptive_smc} improved a control system for ROVs, 
-eliminating the need for dynamics linearization. Another way to refine SMC is to add an integral 
-component into the controller equation. The proposed Integral Sliding Mode Control (ISMC) reduced 
-chattering, effectively eliminating the uncertainty of the model parameters \cite{integral_smc}.
-
-The choice of control strategy should be based on the specific 
-requirements and characteristics of the underwater vehicle. While both SMC modifications showed 
-precise control, these approaches faced certain challenges \cite{integral_smc}, \cite{adaptive_smc}. The ISMC method had limitations in adapting to rapidly changing dynamics, while the ASMC method experienced potential trade-offs in transient performance. 
-These problems were opposite to each other. Therefore, combining them into Adaptive Integral Sliding 
-Mode Control (ADISMC) can be a good idea to leverage the strengths of both methods and compensate 
-for their weaknesses.
+    \temp{My proposal-> use optimization}
+    \todo{\#TODO Connect previous part to my proposed control scheme}\\
+    The choice of control strategy should be based on the specific
+    requirements and characteristics of the underwater vehicle. While both SMC modifications showed
+    precise control, these approaches faced certain challenges \cite{integral_smc}, \cite{adaptive_smc}. The ISMC method had limitations in adapting to rapidly changing dynamics, while the ASMC method experienced potential trade-offs in transient performance.
+    These problems were opposite to each other. Therefore, combining them into Adaptive Integral Sliding
+    Mode Control (ADISMC) can be a good idea to leverage the strengths of both methods and compensate
+    for their weaknesses.
 
 \section{Summary}
+    \todo{\#TODO Change according to my proposed control scheme}
 
-This literature review comprehensively examined the general characteristics, mathematical modeling, 
-and control solutions for underwater vehicles. This overview identified a gap in the field of robust 
-control for remotely operated vehicles, particularly in dealing with parameter and environmental 
-uncertainties. While the original sliding mode control scheme provided robust stability, it suffered 
-from high-frequency output oscillations. There were several variations of SMC available, and each 
-algorithm has its limitations. To address this research gap, a combination of adaptive and integral 
-sliding mode modifications was proposed.
+    This literature review comprehensively examined the general characteristics, mathematical modeling,
+    and control solutions for underwater vehicles. This overview identified a gap in the field of robust
+    control for remotely operated vehicles, particularly in dealing with parameter and environmental
+    uncertainties. While the original sliding mode control scheme provided robust stability, it suffered
+    from high-frequency output oscillations. There were several variations of SMC available, and each
+    algorithm has its limitations. To address this research gap, a combination of adaptive and integral
+    sliding mode modifications was proposed.
