@@ -8,7 +8,7 @@
     including control system design, simulation, and performance analysis. With accurate mathematical models, 
     ROVs are able to navigate through different underwater terrains and complete control tasks with a good 
     precision. Also, the simulation, based on these models, are suitable to test different work scenarios and 
-    detect undesirable ROV's behaviour before the physical experiment.   
+    detect undesirable ROV's behavior before the physical experiment.   
     
     \temp{SRB}
     The fundamentals of the modelling for marine vehicles were fully described in Fossen \cite{fossen:guidance}.
@@ -46,7 +46,7 @@
 
     \begin{figure}[H]
     \begin{tabular}{ccc}
-        \hline Symbol & Description & Dimentionality\\
+        \hline Symbol & Description & Dimensionality\\
         \hline
         $r$ & Linear position vector & $\mathbb{R}^{3}$ \\
         $q$ & Angular position (orientation) vector & $\mathbb{R}^{4}$\\
@@ -98,7 +98,7 @@
     
     For ROV, it is reasonable to define two coordinate frames. 
     These frames are the earth-fixed frame, which is inertial with fixed origin, and the body-fixed frame, 
-    which is a moving frame attached to the vehicle. as depicted in (Fig. \ref{image:frames}). 
+    which is a moving frame attached to the vehicle as depicted in (Fig. \ref{image:frames}). 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{frames}
         \caption{The frames}
@@ -121,7 +121,7 @@
         & \dot{\bar{r}}^N=J(\bar{r}^N) \bar{v}^B \\
         \text{where } & J(\bar{r}^N)=\left[\begin{array}{cc}
         R(\bar{r}^N) & 0_{3 \times 3} \\
-        0_{3 \times 3} & T(\bar{r}^N)
+        0_{4 \times 3} & T(\bar{r}^N)
         \end{array}\right]
     \end{aligned}
     $$
@@ -142,7 +142,7 @@
     \end{aligned}
     $$
 
-\section{Model dynamics}
+\section{Dynamics}
 
     The Newton-Euler approach is commonly used to describe the dynamics of marine vehicles.
     This approach relates the applied forces and moments to the vehicle's linear and angular accelerations.
@@ -152,14 +152,14 @@
     $$
     where $M$ represents the inertia matrix of the rigid body.
 
-    The equation above can be further transformed \todo{why?} into standard manupulator equation form:
+    The equation above can be further transformed into standard manipulator equation form:
     $$
      M_B \dot{\bar{v}}^B+C_B(\bar{v}^B) \bar{v}^B
     = \bar{f}^B
     $$
     where
     $M_B \in \mathbb{R}^{6 x 6}$ is the rigid body mass matrix,
-    $C_B(\bar{v}^B) \in \mathbb{R}^{6 x 6}$ is the rigid body Coriolis and centripetal forces matrix.
+    $C_B(\bar{v}^B) \in \mathbb{R}^{6 x 6}$ is the rigid body Coriolis and centripetal forces' matrix.
 
     Nevertheless, some additional terms should be included in the equation to determine the specifics of the ROVs model. 
     These terms comprise added mass, which represents the inertia of the surrounding fluid, the shift of the 
@@ -167,11 +167,11 @@
     By incorporating these terms into the manipulator equation derived from the Newton-Euler approach, 
     the model becomes more accurate and reflects the natural behavior of the ROV.    
 
-\subsection{Center of Gravity and Center of Buyonancy}
+\subsection{Center of Gravity and Center of Buoyancy}
     
-    Due to the robust design of the marine vehicles, the center of byonancy (COB) is usually alligned with
+    Due to the robust design of the marine vehicles, the center of buoyancy (COB) is usually aligned with
     the center of mass (COM), but placed higher.
-    This shift between centers causes torque acting against the capsize (Fig. \ref{image:scheme}).
+    This shift between centers causes torque acting against the capsizing (Fig. \ref{image:scheme}).
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{01_srb}
         \caption{The vehicle scheme}
@@ -189,7 +189,7 @@
 
 \subsection{Concept of added mass}
 
-    Since the vehicle moves in a viscous enviroment, we can not neglect the inertia of the surrounging liquid.
+    Since the vehicle moves in a viscous environment, we can not neglect the inertia of the surrounding liquid.
     To compensate added mass effect, it is necessary to add two components into dynamics equation: 
     the added mass and the Coriolis forces acting on the added mass.
 
@@ -214,7 +214,7 @@
     $$
 
     The values of dynamical parameters are usually determined
-    empirically. Therefore, the error on $M_A$ and $C_A$ can be quite large and we will not consider
+    empirically. Therefore, the error on $M_A$ and $C_A$ can be quite large, and we will not consider
     these matrices in our model implementation for the control design.
 
 \subsection{Hydrodynamic Damping}
@@ -260,65 +260,98 @@
 
 \subsection{Matrix representation}
 
-    The final system of equations for the mathematical model is:
+    The final equation representing the system dynamics is:
     $$
-    \begin{cases}
-    & M \dot{\bar{v}}^B + C(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)= \bar{f}^B\\
-    & \dot{\bar{r}}^N=J(\bar{r}^N) \bar{v}^B
-    \end{cases}
+        M \dot{\bar{v}}^B + C(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)= \bar{f}^B
     $$
-    where
-    $M=M_B+M_A$, $C(\bar{v}^B)=C_B(\bar{v}^B)+C_A(\bar{v}^B)$
+    where $M=M_B+M_A$, $C(\bar{v}^B)=C_B(\bar{v}^B)+C_A(\bar{v}^B)$
 
 \section{Thrusters modelling}
 
-    \todo{\#TODO Add more info. Explain the simplification}
-
-    In the general case, the thruster force and moment vector will be 
-    a complicated function depending on the vehicle's velocity vector $\bar{v}^B$, 
-    voltage of the power source V 
-    and the control variable $u$.
-    This relationship can be expressed as:
+    The force and moment vector produced by the thruster are typically represented 
+    by a complex nonlinear function $f(\bar{v}^B, V, u)$, which depends on the 
+    vehicle's velocity vector $\bar{v}^B$, the power source voltage $V$, and the 
+    control variable $u$. 
+    However, expressing such a nonlinear relationship directly can be challenging 
+    in practical applications. As a result, some authors propose a simpler approach:
     $$
     \bar{f}^B=T\phi(u)
     $$
-    where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix, which maps body torques to thuster forces, 
+    where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix, which maps body torques to truster forces, 
     $\phi(u) \in \mathbb{R}^{n x n}$ is the DC-gain transfer function, which defines relation between
     PWM signal and output force.
 
-\section{BlueRov modelling \todo{will be placed in a different chapter?}}
+    % -> #TODO Affine thruster model tau = Bu where B = T@K
 
-    \todo{\#TODO Check the coefficients. Fix the simulation.}
+% \section{BlueRov modelling \todo{will be placed in a different chapter?}}
 
-    By the specification of the given thrusters, the dependency between control 
-    PWM signal and thrust is highly nonlinear (Fig. \ref{image:thrust}).
-    \begin{figure}[H]
-        \centering\includegraphics*[width=0.8\textwidth]{thrusters}
-        \caption{}
-        \label{image:thrust}
-    \end{figure}
-    In order to model this relation, the polynomial regression was applied on the normalized test data. 
-    A 5th-order approximation of the developed thrust at 16V voltage will be:
-    $$
-    \phi(u_i) = - 0.22 u_i^5
-    - 0.0135 u_i^4
-    + 1.1 u_i^3
-    + 0.172 u_i^2
-    + 1.327 u_i 
-    + 0.027
-    $$
-    The inverse dependency can be determined in the same way. 
-    The following expression is obtained :
-    $$
-    \hat{\phi}(f_i) = 0.0006 f_i^5 
-    - 0.0004 f_i^4 
-    - 0.02 f_i^3
-    + 0.0006 f_i^2 
-    + 0.56 f_i
-    -0.0334
-    $$
-    \href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
+%     \todo{\#TODO Check the coefficients. Fix the simulation.}
+
+%     By the specification of the given thrusters, the dependency between control 
+%     PWM signal and thrust is highly nonlinear (Fig. \ref{image:thrust}).
+%     \begin{figure}[H]
+%         \centering\includegraphics*[width=0.8\textwidth]{thrusters}
+%         \caption{}
+%         \label{image:thrust}
+%     \end{figure}
+%     In order to model this relation, the polynomial regression was applied on the normalized test data. 
+%     A 5th-order approximation of the developed thrust at 16V voltage will be:
+%     $$
+%     \phi(u_i) = - 0.22 u_i^5
+%     - 0.0135 u_i^4
+%     + 1.1 u_i^3
+%     + 0.172 u_i^2
+%     + 1.327 u_i 
+%     + 0.027
+%     $$
+%     The inverse dependency can be determined in the same way. 
+%     The following expression is obtained :
+%     $$
+%     \hat{\phi}(f_i) = 0.0006 f_i^5 
+%     - 0.0004 f_i^4 
+%     - 0.02 f_i^3
+%     + 0.0006 f_i^2 
+%     + 0.56 f_i
+%     -0.0334
+%     $$
+%     \href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
 
 \section{Summary}
 
-    \todo{\#TODO Make a summary of the chapter}
+This chapter provides a comprehensive overview of essential 
+concepts and equations crucial for understanding the kinematics and dynamics of ROVs.
+
+\textbf{Notation} \\
+ROVs have six degrees of freedom (DOF), which include three for translation and three for rotation.
+The use of quaternions to represent orientation helps to avoid singularity issues.
+
+\textbf{Frame of reference} \\
+There are two coordinate frames: the earth-fixed frame and the body-fixed frame. 
+State variables are denoted by $_B$ in the body-fixed frame and $_N$ in the earth-fixed one.
+
+\textbf{Kinematics} \\
+The motion of a marine vehicle, without considering external forces, 
+is expressed in terms of velocities for two coordinate frames:
+$$
+\dot{\bar{r}}^N=J(\bar{r}^N) \bar{v}^B
+$$
+
+\textbf{Dynamics} \\
+The Newton-Euler approach is used to describe the dynamics of ROV by relating applied 
+forces and moments to linear and angular accelerations:
+$$
+M \dot{\bar{v}}^B + C(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)= \bar{f}^B
+$$
+Additional terms like added mass, center of buoyancy, and damping effects enhance model accuracy.
+
+\textbf{Thruster modelling} \\
+The complex relationship between thruster force and control variables 
+is simplified using a thrust configuration matrix $T$ and a DC-gain transfer function $\phi(u)$.
+$$
+\bar{f}^B=T\phi(u)
+$$
+
+The mathematical models developed in this chapter lay the foundation for designing control systems. 
+By accurately capturing the dynamics and kinematics of ROVs, these models enable precise navigation 
+underwater. The next chapter will implement effective control strategies and enhance the 
+performance of ROVs in various scenarios.
