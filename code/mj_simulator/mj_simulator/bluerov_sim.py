@@ -50,7 +50,11 @@ class BluerovSim(Simulator):
         Parameters:
             u (np.ndarray): The control signal to apply, compatible with the simulation's control array.
         """
-        # coefs = [-0.0886937043074987, -0.00545877001704709, 0.442695591285138, 0.0695613072837444, 0.536616675414586, -0.059119802181461]
-        # poly_ctrl = [sum([coefs[i]*x**(5 - i) for i in range(6)]) for x in u]
-        # self.state._control[:] = poly_ctrl
-        self.state._control[:] = u
+        mu = 0
+        std = 33
+        u_norm = (u-mu)/std
+        coefs = [0.054608309216589, 0.0043623874523217, -0.320974346473973, -0.0639160871326408, 1.38048196118199, 0.0635708584715591]
+        poly_ctrl = [sum([coefs[i]*u_k**(5 - i) for i in range(6)]) for u_k in u_norm]
+        u_f = np.array(poly_ctrl)*std + mu
+        self.state._control[:] = u_f
+        # self.state._control[:] = u

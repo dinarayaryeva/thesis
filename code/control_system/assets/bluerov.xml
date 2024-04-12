@@ -68,14 +68,14 @@
   <actuator>
     <!-- ctrllimited="true" ctrlrange="-1 1" -->
     
-    <motor class="body" name="thrust1" site="rotor1" gear="-0.7 0.7 0 0 0 0"/>
-    <motor class="body" name="thrust2" site="rotor2" gear="-0.7 -0.7 0 0 0 0"/>
-    <motor class="body" name="thrust3" site="rotor3" gear="0.7 0.7 0 0 0 0"/>
-    <motor class="body" name="thrust4" site="rotor4" gear="0.7 -0.7 0 0 0 0"/>
-    <motor class="body" name="thrust5" site="rotor5" gear="0 0 -1.0 0 0 0"/>
-    <motor class="body" name="thrust6" site="rotor6" gear="0 0 1.0 0 0 0"/>
-    <motor class="body" name="thrust7" site="rotor7" gear="0 0 -1.0 0 0 0"/>
-    <motor class="body" name="thrust8" site="rotor8" gear="0 0 1.0 0 0 0"/>
+    <motor class="body" name="thrust1" site="rotor1" gear="-0.7 0.7 0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust2" site="rotor2" gear="-0.7 -0.7 0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust3" site="rotor3" gear="0.7 0.7 0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust4" site="rotor4" gear="0.7 -0.7 0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust5" site="rotor5" gear="0 0 -1.0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust6" site="rotor6" gear="0 0 1.0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust7" site="rotor7" gear="0 0 -1.0 0 0 0" ctrlrange="-50 50"/>
+    <motor class="body" name="thrust8" site="rotor8" gear="0 0 1.0 0 0 0" ctrlrange="-50 50"/>
     
   </actuator>
 

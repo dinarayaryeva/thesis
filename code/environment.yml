@@ -5,6 +5,7 @@ dependencies:
   - python=3.10
   - pip
   - numpy=1.23.*
+  - glfw=2.6.3
   - sympy
   - quaternion
   - ipykernel

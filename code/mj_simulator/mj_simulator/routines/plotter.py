@@ -16,35 +16,85 @@ https://stackoverflow.com/questions/67111498/matplotlib-animate-in-python-using-
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot(t, x=None, v=None, u=None):
+
+def plot(t, x=None, v=None, u=None, separate=False):
     dpi = 120
-    width = 600
-    height = 1200
+    width = 1280
+    height = 720
     figsize = (width / dpi, height / dpi)
-    _, ax = plt.subplots(4, 1, figsize=figsize, dpi=dpi, sharex=True)
 
-    ax[0].set_title('position')
-    ax[0].set_ylabel('m')
+    x = np.array(x) if x is not None else x
+    v = np.array(v) if v is not None else v
+    u = np.array(u) if u is not None else u
 
-    ax[1].set_title('quaternion')
-    ax[1].set_ylabel('')
+    N = min([len(e) for e in [t, x, v, u] if e is not None])
 
-    ax[2].set_title('velocity')
-    ax[2].set_ylabel('m / s')
+    if separate:
+        if x is not None:
+            pos = x[:, :3]
+            q = x[:, 3:]
+            plt.title('Position')
+            plt.ylabel('m')
+            plt.xlabel('time, s')
+            plt.plot(t[:N], pos[:N, :], label=[r'$p_x$', r'$p_y$', r'$p_z$'])
+            plt.legend()
+            plt.show()
 
-    ax[3].set_title('control')
-    ax[3].set_ylabel('')
+            plt.title('Quaternion')
+            plt.xlabel('time, s')
+            plt.plot(t[:N], q[:N, :], label=[
+                        r'$q_0$', r'$q_1$', r'$q_2$', r'$q_3$'])
+            plt.legend()
+            plt.show()
 
-    if x is not None:
-        x = np.array(x)
-        pos = x[:, :3]
-        q = x[:, 3:]
-        ax[0].plot(t, pos)
-        ax[1].plot(t, q)
+        if v is not None:
+            plt.title('Velocity')
+            plt.ylabel('m/s')
+            plt.xlabel('time, s')
+            plt.plot(t[:N], v[:N, :], label=[r'$v_x$', r'$v_y$',
+                        r'$v_z$', r'$w_x$', r'$w_y$', r'$w_z$'])
+            plt.legend()
+            plt.show()
 
-    if v is not None:
-        ax[2].plot(t, v)
+        if u is not None:
+            plt.title('Control')
+            plt.xlabel('time, s')
+            plt.plot(t[:N], u[:N, :])
+            plt.legend()
+            plt.show()
+    else:
 
-    if u is not None:
-        ax[3].plot(t, u)
-    plt.show()
+        fig, ax = plt.subplots(2, 2, figsize=figsize, dpi=dpi, sharex=True)
+        fig.suptitle("ROV state plot")
+
+        ax[0][0].set_title('position')
+        ax[0][0].set_ylabel('m')
+
+        ax[0][1].set_title('quaternion')
+        ax[0][1].set_ylabel('')
+
+        ax[1][0].set_title('velocity')
+        ax[1][0].set_ylabel('m / s')
+        ax[1][0].set_xlabel('time, s')
+
+        ax[1][1].set_title('control')
+        ax[1][1].set_ylabel('')
+        ax[1][1].set_xlabel('time, s')
+
+        if x is not None:
+            pos = x[:, :3]
+            q = x[:, 3:]
+            ax[0][0].plot(t[:N], pos[:N, :], label=[r'$p_x$', r'$p_y$', r'$p_z$'])
+            ax[0][1].plot(t[:N], q[:N, :], label=[
+                        r'$q_0$', r'$q_1$', r'$q_2$', r'$q_3$'])
+            ax[0][0].legend()
+            ax[0][1].legend()
+
+        if v is not None:
+            ax[1][0].plot(t[:N], v[:N, :], label=[r'$v_x$', r'$v_y$',
+                        r'$v_z$', r'$w_x$', r'$w_y$', r'$w_z$'])
+            ax[1][0].legend()
+
+        if u is not None:
+            ax[1][1].plot(t[:N], u[:N, :])
+        plt.show()

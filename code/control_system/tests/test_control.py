@@ -14,7 +14,7 @@ sim = BluerovSim("../assets/bluerov.xml",
                 freq=2000,
                 buoyancy = 1.01,
                 stream = [1.0, 0, 0],
-                render=False,
+                render=True,
                 by_step=True,
                 q0=q0, v0=v0)
 
@@ -27,7 +27,7 @@ ts = 0
 control = np.zeros(sim.nu)
 
 # Set the desired position for the robot's joints.
-q_des = np.array([0.5, -0.7, -0.5, 1, 0, 0, 0])
+q_des = np.array([0, 0, 0, 1, 0, 0, 0])
 
 controller = SlidingMode(model=sim.model)
 
@@ -55,17 +55,16 @@ try:
 except KeyboardInterrupt:
     # Handle any cleanup if the simulation is interrupted.
     print("Simulation interrupted.")
-    sim.close()
-    logger.close()
 finally:
     # Perform any finalization steps, such as closing the simulator window.
     print("Finalizing simulation...")
+    sim.close()
 
     t_s = logger.get_storage()["t"]
     xs = logger.get_storage()["x"]
     vs = logger.get_storage()["v"]
     us = logger.get_storage()["u"]
-    plot(t_s[:len(xs)], x=xs, v=vs, u=us)
 
-    sim.close()
     logger.close()
+
+    plot(t_s, x=xs, v=vs, u=us, separate=True)
