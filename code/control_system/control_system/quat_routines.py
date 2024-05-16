@@ -136,26 +136,6 @@ def quat2rot(Q):
     return rot_matrix
 
 
-def quat2so3(quaternion):
-    so3 = np.array(quaternion[1:])
-    theta = np.arcsin(np.linalg.norm(so3))
-
-    if abs(theta) < 0.0000001:
-        so3 = np.zeros(3)
-    else:
-        so3 /= np.sin(theta / 2.0)
-        so3 *= theta
-
-    return so3
-
-
-def so3_error(quaternion, desired_quaternion):
-    conjugated_quaternion = conjugate(quaternion)
-    q_err = quaternion_product(desired_quaternion, conjugated_quaternion)
-    so3_error = quat2so3(q_err)
-    return so3_error
-
-
 def body2world(body_vector, quaternion):
     rotation = quat2rot(quaternion)
     return rotation @ body_vector
