@@ -3,14 +3,12 @@
 
 \chaptermark{Third Chapter Heading}
 
-    \temp{Chapter intro +  motivation}
     Remotely operated vehicles (ROVs) are complex systems that require mathematical models for various purposes, 
     including control system design, simulation, and performance analysis. With accurate mathematical models, 
     ROVs are able to navigate through different underwater terrains and complete control tasks with a good 
     precision. Also, the simulation, based on these models, are suitable to test different work scenarios and 
     detect undesirable ROV's behavior before the physical experiment.   
     
-    \temp{SRB}
     The fundamentals of the modelling for marine vehicles were fully described in Fossen \cite{fossen:guidance}.
     Using common assumptions, ROV is treated as a single rigid body with six degrees of freedom (DOF).
     By considering the vehicle as a rigid body, we can simplify the mathematical modeling process while capturing the essential dynamics 
@@ -19,19 +17,24 @@
     In order to effectively model rigid bodies, it is crucial to consider their kinematic and dynamic properties.
 \section{Notations}
 
-    Before proceeding to theoretical derivations, it is necessary to clarify the notations.
-    For the motion with six DOF, six independent coordinates are defined in the coordinate frame: 
-    three for translational directions (surge, sway, and heave) and three for rotational directions 
-    (roll, pitch, and yaw) as depicted in (Fig. \ref{image:6dof})
+    Before we begin delving into the theory behind the modeling process, 
+    it is crucial to establish clarity on the notations. 
+
+    In the context of motion with six degrees of freedom (DOF), 
+    a set of six independent coordinates is defined within the 
+    coordinate frame: three for translational directions 
+    (surge, sway, and heave) and three for rotational directions 
+    (roll, pitch, and yaw), as illustrated in Figure \ref{image:6dof}.
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{6dof}
+        % # TODO Change caption
         \caption{6 DOF of a marine vehicle}
         \label{image:6dof}
     \end{figure}
 
     The linear position of the body is defined as $r = [r_x, r_y, r_z]^\top$ for translation along xyz axis respectively.
-    The orientation can be expressed in terms of Euler angles around corresponding axis, it will eventually lead 
+    The orientation can be expressed in terms of Euler angles around corresponding axis, but it will eventually lead 
     to the singularity when sway angle is $± 90^{\circ}$. 
     The quaternions can resolve this problem by adding redundancy into the representation. 
     The quaternion is defined in scalar-first form as 
@@ -58,6 +61,7 @@
         \end{tabular}
         \caption{Notation}
         \label{table:notation}
+        % # TODO Ref the table, not the figure
     \end{figure}
 
     For the convenience, it is desirable to define combined vectors of positions, velocities and forces as:
@@ -72,7 +76,8 @@
         \tau
     \end{array}\right]$
 
-    \temp{Cross product notation}
+    % # TODO State the hat above to act the opposite way
+
     In order to manipulate with obtained vectors, it is necessary to define cross product operators.
     For vectors in $\mathbb{R}^{3}$ the cross product is multiplication by skew-symmetric matrix $S(\lambda)$:
     $$
@@ -92,9 +97,9 @@
 
 \section{Frames of reference}
 
-    In order to derive the kinematics and dynamics of the system, the calculations need to be projected into 
-    the same frame of reference. 
-    Sometimes several coordinate frames are defined based on the system configuration. 
+    In order to determine the kinematics and dynamics of the system, it is essential 
+    to project the calculations into a consistent frame of reference. 
+    In some cases, multiple coordinate frames are established based on the system's configuration.
     
     For ROV, it is reasonable to define two coordinate frames. 
     These frames are the earth-fixed frame, which is inertial with fixed origin, and the body-fixed frame, 
@@ -222,11 +227,11 @@
     Generally, the dynamics of underwater vehicles can be highly nonlinear and coupled.
     Nevertheless, during the slow non-coupled motion the damping can be approximated to linear and quadratic damping:
     $$\begin{aligned}
-        & D(\bar{v}^B)=-K_{lin} - K_{quad}\lvert \bar{v}^B \rvert
+        & D(\bar{v}^B)=-K_{0} - K_{1}\lvert \bar{v}^B \rvert
     \end{aligned}
     $$
 
-    The appropriate values of damping coefficients for vectors $K_{lin}$ and $K_{quad}$ can be discovered through several experiments.
+    The appropriate values of damping coefficients for vectors $K_{0}$ and $K_{1}$ can be discovered through several experiments.
 
 \subsection{Restoring forces}
 
@@ -280,41 +285,6 @@
     where $T \in \mathbb{R}^{6 x n}$ is the thrust configuration matrix, which maps body torques to truster forces, 
     $\phi(u) \in \mathbb{R}^{n x n}$ is the DC-gain transfer function, which defines relation between
     PWM signal and output force.
-
-    % -> #TODO Affine thruster model tau = Bu where B = T@K
-
-% \section{BlueRov modelling \todo{will be placed in a different chapter?}}
-
-%     \todo{\#TODO Check the coefficients. Fix the simulation.}
-
-%     By the specification of the given thrusters, the dependency between control 
-%     PWM signal and thrust is highly nonlinear (Fig. \ref{image:thrust}).
-%     \begin{figure}[H]
-%         \centering\includegraphics*[width=0.8\textwidth]{thrusters}
-%         \caption{}
-%         \label{image:thrust}
-%     \end{figure}
-%     In order to model this relation, the polynomial regression was applied on the normalized test data. 
-%     A 5th-order approximation of the developed thrust at 16V voltage will be:
-%     $$
-%     \phi(u_i) = - 0.22 u_i^5
-%     - 0.0135 u_i^4
-%     + 1.1 u_i^3
-%     + 0.172 u_i^2
-%     + 1.327 u_i 
-%     + 0.027
-%     $$
-%     The inverse dependency can be determined in the same way. 
-%     The following expression is obtained :
-%     $$
-%     \hat{\phi}(f_i) = 0.0006 f_i^5 
-%     - 0.0004 f_i^4 
-%     - 0.02 f_i^3
-%     + 0.0006 f_i^2 
-%     + 0.56 f_i
-%     -0.0334
-%     $$
-%     \href{https://colab.research.google.com/drive/1XaNNENZPk88yaddOYy01vXtHd8_YwT2m?usp=sharing}{Click for Colab}
 
 \section{Summary}
 
