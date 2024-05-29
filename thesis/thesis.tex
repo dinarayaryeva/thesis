@@ -81,8 +81,8 @@
 \counterwithout{table}{chapter}
 \renewcommand{\thetable}{\Roman{table}}
 %Hints
-\newcommand\pic[1]{(Fig. \ref{#1})} %Ref on figure
-\newcommand\tab[1]{(Tab. \ref{#1})} %Ref on table
+\newcommand\pic[1]{Fig. \ref{#1}} %Ref on figure
+\newcommand\tab[1]{Tab. \ref{#1}} %Ref on table
 
 \setlength{\headheight}{32.0976pt}
 \usepackage{enumitem}
@@ -132,6 +132,15 @@
 \newcommand\todo[1]{\textcolor{red}{#1}}
 \newcommand\temp[1]{\textcolor{blue}{#1}\\}
 
+\usepackage{tabularx}
+\newlength{\conditionwd}
+\newenvironment{conditions}[1][where:]
+  {%
+   #1\tabularx{\textwidth-\widthof{#1}}[t]{
+     >{$}l<{$} @{${}={}$} X@{}
+   }%
+  }
+
 \begin{document}
 
 \includepdf[pages=-, offset=75 -75]{title.pdf}
@@ -143,7 +152,6 @@
 
 \newpage
 \include{chapters/abstract}
-% \setcounter{chapter}{3}
 \setcounter{page}{1} % set manually an actual number from which introduction starts
 \include{chapters/chapter1}
 \include{chapters/chapter2}
@@ -155,6 +163,6 @@
 
 %% REFERENCES
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
-\include{chapters/appex}
+% \include{chapters/appex}
 \end{document}
 

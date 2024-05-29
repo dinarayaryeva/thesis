@@ -3,12 +3,6 @@
 
 \chaptermark{Forth Chapter Heading}
 
-% viscosity
-% thrusters
-% control lyapunov function
-
-% \todo{\#TODO Reformulate intro}
-
     The development of a robust control system for underwater robots hinges on a 
     comprehensive understanding of system dynamics and control objectives.
     This chapter explores control design for underwater robots, focusing on the application 
@@ -23,11 +17,9 @@
 
     \subsection{Control Objectives}
 
-    \temp{General control design}
     The main idea of the control system design is to choose such control input $u$ which 
     meets the desired performance specifications while ensuring stability.
 
-    \temp{Underwater control design}
     Underwater robots require precise control systems to navigate and operate effectively
     in challenging marine environments. These control objectives are crucial for ensuring
     the robot's stability, accuracy, and responsiveness:
@@ -48,56 +40,52 @@
             responses to changing conditions.
     \end{itemize}
 
-    \temp{Connect to the next chapter}
     Next, let us discuss the challenges posed by uncertainties in control system modeling, 
     which must be understood before diving into advanced control techniques.
 
 \subsection{Model Uncertainties}
 
-    \temp{What uncertainties?}
     The estimated model dynamics may not perfectly match the actual system behavior 
     due to imprecise parameter estimates caused by simplified dynamics 
-    and external factors. J. Slotine and W. Li distinguish between two primary 
-    types of modeling inaccuracies \cite{slotine_applied}:
+    and external factors. Two primary types of modeling inaccuracies 
+    are defined by J. Slotine and W. Li \cite{slotine_applied}:
     \begin{enumerate}
-        \item structured (or parametric) uncertainties
-        \item unstructured uncertainties (or unmodeled dynamics)
+        \item \textbf{Structured} (or parametric) \textbf{uncertainties} : 
+        associated with errors in the terms included in the model
+        \item \textbf{Unstructured uncertainties} (or unmodeled dynamics) : 
+        linked to inaccuracies in the system's order
     \end{enumerate}
-    The first type is associated with errors in the terms included in the model, 
-    while the second type is linked to inaccuracies in the system's order.
 
-    \temp{State which uncertainties ROV has}
     Recalling dynamics of ROV, following parameters may have some imprecision:
     \begin{itemize}
-        \item Body parameters. The mass matrix $M_B$ and the matrix of Coriolis forces $C_B$ 
+        \item \textbf{Body parameters}. The mass matrix $M_B$ and the matrix of Coriolis forces $C_B$ 
         may unknown due to uncertain values of mass $m$ and inertia matrix $I_0$.
-        \item Coefficients of viscous damping $D$. The values for linear and quadratic 
+        \item Coefficients of \textbf{viscous damping} $D$. The values for linear and quadratic 
         terms are defined empirically.
-        \item Restoring forces $g$. Specifically, water density $\rho$ is environment dependent 
+        \item \textbf{Restoring forces} $g$. Specifically, water density $\rho$ is environment dependent 
         and whole body volume $\nabla$ is hard to calculate with proper accuracy.
-        \item Added mass parameters $M_A$ and $C_A$. They cannot be calculated directly and will 
+        \item \textbf{Added mass parameters} $M_A$ and $C_A$. They cannot be calculated directly and will 
         be excluded in future calculations.
     \end{itemize}
-    Further, the approximated value of the parameter $x$ is represented as $\hat x$,
+    Further, the approximated value of the parameter $x$ is represented as $\mathbf{\hat x}$,
     while the difference between this approximation and the actual value is 
-    defined as $\tilde x = \hat x - x$. Instead of the omitted terms, we will incorporate a common disturbance 
+    defined as $\mathbf{\tilde x = \hat x - x}$. Instead of the omitted terms, we will incorporate a common disturbance 
     term $\delta$.
 
-    In this way, the dynamics take the following form:
+    In this way, the dynamics in equation \ref{eq::matrix_dynamics} takes the following form:
     \begin{equation}
         M_B \dot{\bar{v}}^B + C_B(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)
             + \delta = T\phi(u)
     \end{equation}
 
 \subsection{Thruster Mapping Approximation}
-    \temp{Thruster mapping approximation}
     As stated before, thruster mapping is defined through the configuration 
     matrix $T$ and the DC-gain transfer function $\phi(u)$. However, $\phi(u)$ 
     can be highly nonlinear and voltage dependent. 
-    Let us examine the example of the function $\phi(u)$ shown in Fig. \ref{image:thrust}.
+    Let us examine the general function $\phi(u)$ shown in Fig. \ref{image:thrust}.
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{thrust_plot}
-        \caption{The relationship between thrust and PWM.}
+        \caption{Relationship Between Thrust Output and Pulse Width Modulation (PWM) Signal for ROV Thrusters}
         \label{image:thrust}
     \end{figure}
     It is suggested to use a third-order polynomial to model the transfer function above. 
@@ -107,14 +95,18 @@
     \begin{equation}
         \hat{\phi}(u) = k\phi_0(u)   
     \end{equation}
-    where $k$ is a scaling coefficient and $\phi_0(u)$ is the nominal 
-    approximation defined by the highest voltage curve. 
+    \begin{conditions}
+        \text{\quad}k & the scaling coefficient\\
+        \phi_0(u) & the nominal third-order polynomial
+    \end{conditions} 
+    \vspace{0.5cm}
+
     The value of $k$ must be between $k_{min} = 0.4$ and $k_{max} = 1$ to cover the 
     entire range.
     (Fig. \ref{image:thrust_apprx}).
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{apprx}
-        \caption{The thruster mapping approximation.}
+        \caption{Approximation Model for Thruster Mapping in ROV Control Systems}
         \label{image:thrust_apprx}
     \end{figure}
     
@@ -149,13 +141,11 @@
     \end{equation}
 
 \subsection{Summary}
-    \temp{Conclusion}
     To summarize, the main objective of the underwater control system is to accurately 
     follow the desired trajectory, even in the presence of external disturbances 
     and uncertainties. The ultimate goal is to make sure that the tracking error 
     approaches zero as time progresses towards infinity.
 
-    \temp{Control affected}
     As was previously mentioned, control systems can be negatively impacted 
     by modeling nonlinear dynamics. Therefore, any practical design must handle them explicitly. 
     Inverse dynamics control can be a good starting point for deriving complex nonlinear 
@@ -163,22 +153,19 @@
 
 \section{Inverse dynamics}
 
-    \temp{Intro to ID}
     The nonlinear control method, known as inverse dynamics, tracks a trajectory by calculating 
     the joint actuator torques required to achieve a specific trajectory.
     This approach relies on exact cancellation of nonlinearities in the robot equation of motion.
 
-    \temp{More on inverse dynamics}
     The inverse dynamics control is directly related to the solution of the inverse
     dynamics problem. By appropriately inverting the dynamic model, a control law can 
     cancel the nonlinear part of the dynamics, decouple the interactions 
     between the regulated variables, and specify the time characteristics of the decay of the 
     task errors.
 
-    \subsection{Control Law Design}
-    \temp{Control design}
-    To simplify the control process, we can define a virtual control 
-    input $\nu$, which is related to the actual control input $u$ 
+    \subsection{Virtual Control}
+    To simplify the control process, we can define a virtual control
+    input $\boldsymbol{\nu}$, which is related to the actual control input $\mathbf{u}$ 
     as:
     \begin{equation}
         \nu = \phi_0(u)
@@ -189,10 +176,11 @@
     This inverse relation will allow us to easily switch back and forth 
     between the actual and virtual control inputs as needed.
 
-    Recalling the approximated dynamics equation \ref{eqn::apprx_dynamics}, we can design the following virtual control law to 
+    \subsection{Control Law Design}
+      Recalling the approximated dynamics equation \ref{eqn::apprx_dynamics}, we can design the following virtual control law to 
     linearize the system:
     \begin{equation}
-        \label{eqn:inverse_dynamics}
+        \label{eqn::inverse_dynamics}
         \nu = B^{+} (Ma + h(r, v))
     \end{equation}
     while the outer-loop control $a$ is designed as a proportional-derivative (PD) controller:
@@ -201,13 +189,11 @@
     \end{equation}
 
     % # TODO Change
-    The equation \ref*{eqn:inverse_dynamics} becomes more complex when system parameters and disturbances are 
+    The equation \ref{eqn::inverse_dynamics} becomes more complex when system parameters and disturbances are 
     unknown:
     \begin{equation}
     \nu = \hat{B}^{+}(\hat{M}a + \hat h(r, v))
     \end{equation}
-
-    \temp{Control analysis}
     Substitution to the dynamics yields:
     \begin{equation}
     \dot{v} = M^{-1}(B\hat{B}^{+}h(r, v) - \hat h(r, v) - \delta) + 
@@ -215,13 +201,9 @@
     \end{equation}
 
     \subsection{Error Analysis}
-
-    \todo{\#TODO Add analysis}
-
-    \temp{Error dynamics}
     In terms of tracking error $e = \tilde{r}$, the following system can 
     be designed:
-    $$
+    \begin{equation}
     \begin{aligned}
         e &= \tilde{r} \\
         \dot e &= \tilde{v} \\
@@ -229,7 +211,7 @@
         &= \dot{v}_{des} - M^{-1}(B\hat{B}^{+}h - \hat h - \delta) + 
         M^{-1}B\hat{B}^{+}\hat{M}(\dot{v}_{des} - K_pe - K_d \dot e)
     \end{aligned}
-    $$
+    \end{equation}
     Hence, the error dynamics can be represented in a form of second order differential 
     equation as:
 
@@ -266,6 +248,8 @@
         \|e\| \leq \frac{\|d\|}{\lambda_{min}(A_0)}
     \end{equation}
 
+    \subsection{Summary}
+
     \todo{ Add paragraph about: undefined or big bounds(no bounds on $\dot v_{des}$), 
     hard to tune, not robust}
 
@@ -275,13 +259,11 @@
 
 \section{Sliding Mode}
 
-    \temp{Intro to SMC}
     As discussed before, there are several robust controller
     designs available. However, the sliding mode approach, suggested by Vadim 
     Utkin in the late 1970s, is highly regarded as the most sophisticated and 
     frequently implemented one \cite{utkin}.
 
-    \temp{SMC definition}
     Sliding mode control (SMC) is a nonlinear control method that guarantees
     robust control of systems with uncertainties and disturbances.
     This technique involves developing a sliding surface within the state
@@ -294,20 +276,12 @@
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.5\textwidth]{sliding_mode}
-        \caption{A general sliding mode scheme.}
+        \caption{General Schematic of Sliding Mode Control (SMC)}
         \label{image:sliding_mode}
     \end{figure}
 
-    \temp{Advantages to use SMC}
-    Additionally, 
-    the sliding surface ensures robustness to uncertainties and disturbances by 
-    making the system behavior insensitive to these factors. 
-    
-    In summary, SMC is a simple and effective solution for controlling nonlinear systems.
-
 \subsection{Sliding Surface Design}
 
-    \temp{Sliding surface}
     In sliding mode control, a sliding surface is a hyperplane in
     the state space that defines the desired system behavior.
     The aim of the control is to force the system's trajectory to slide
@@ -316,11 +290,10 @@
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.8\textwidth]{sliding_phases}
-        \caption{The phases of sliding mode control.}
+        \caption{Phases of Sliding Mode Control: Reaching Phase and Sliding Phase}
         \label{image:sliding_phases}
     \end{figure}
 
-    \temp{Properties of SMC}
     The design of the sliding surface is critical for the performance of the SMC
     system. The sliding surface should be:
     \begin{itemize}
@@ -332,74 +305,70 @@
             sliding surface and keep it there.
     \end{itemize}
 
-    \temp{Invariant sets}
     In order to satisfy the conditions above, the sliding surface is designed to be an invariant set.
     Invariant sets are sets of states in the state space that, once entered, cannot be exited under 
     the action of the control law.
 
-    \temp{General equation}
+    \subsection{Sliding Condition}
     In the state space $\mathbb{R}^n$, let us define the time-varying surface
-    given by scalar equation $s(\bar{r}, t)$:
+    given by scalar equation $\mathbf{s(r, t)}$:
     \begin{equation}
-        s({r}, t) = (\frac{d}{dt} + \lambda)^{n-1}\tilde{{r}}
+        \mathbf{s(r, t)} = (\frac{d}{dt} + \lambda)^{n-1}\tilde{{r}}
     \end{equation}
     where $n$ denotes the system's order and $\lambda$ is a positive scalar.
 
-    \temp{Sliding condition}
-    In order to ensure convergence of $s$ along all system trajectories in finite time, 
-    let us define Lyapunov candidate $V = s^2$ as the squared distance to the surface.
+    In order to ensure convergence of $\mathbf{s(r, t)}$ along all system trajectories in finite time, 
+    let us define Lyapunov candidate $\mathbf{V = s^2}$ as the squared distance to the surface.
+    
     The sliding condition can then be formulated accordingly:
     \begin{equation}
     \frac{dV}{dt} < -\eta \sqrt{V} \text{\quad or \quad}
-    \frac{1}{2}\frac{d}{dt}\|s\|^2 = s^T\dot{s} < \eta \|s\|
+    \frac{1}{2}\frac{d}{dt}\|s\|^2 = s^T\dot{s} < -\eta \|s\|
+    \label{eq::sliding}
     \end{equation}
     where $\eta>0$ defines the rate of convergence to the sliding surface.
 
-    \temp{Invariance}
     When the sliding condition is satisfied, the surface becomes an invariant set
-    and implies convergence to $\tilde{r}^B$, since the system described by 
+    and implies convergence to $\mathbf{\tilde{r}}$, since the system described by 
     the differential equation:
     \begin{equation}
         s = (\frac{d}{dt} + \lambda)^{n-1}\tilde r = 0
     \end{equation}
-    is inherently stable and remains at the equilibrium point $\tilde r = 0$.
+    is inherently stable and remains at the equilibrium point $\mathbf{\tilde{r} = 0}$.
 
-    \temp{New control objective}
     Applying such transformation yields a new representation of the tracking performance:
     \begin{equation}
         s \rightarrow 0 \Rightarrow \tilde{r} \rightarrow 0
     \end{equation}
-    In other words, tracking $r^B$ is the same as staying on the sliding surface. 
+    In other words, tracking $\mathbf{r}$ is the same as staying on the sliding surface. 
     It is thus possible to replace the tracking problem of the $n$-dimensional vector 
-    $r$ with a first order stabilization problem in $s$.
+    $\mathbf{r}$ with a first order stabilization problem in $\mathbf{s}$.
 
 \subsection{Control Law Design}
 
-    \temp{Control law}
-    The control input $a$ comprises two distinct components: nominal control $a_n$, 
-    and an additional robust part $a_s$: 
+    The control input $\mathbf{a}$ comprises two distinct components: 
+    nominal control $\mathbf{a_n}$, 
+    and an additional robust part $\mathbf{a_s}$: 
     \begin{equation}
         a = a_n + a_s
     \end{equation}
     \begin{figure}[H]
         \centering\includegraphics*[width=0.8\textwidth]{control_scheme}
-        \caption{The sliding mode control scheme}
+        \caption{Control Scheme for Sliding Mode Control (SMC) in ROVs}
         \label{image:control_scheme}
     \end{figure}
-    The nominal control $a_n$ aims to compensate for the system's dynamics, 
-    while the robustifying component $a_s$ is designed to enhance the 
+    The nominal control $\mathbf{a_n}$ aims to compensate for the system's dynamics, 
+    while the robustifying component $\mathbf{a_s}$ is designed to enhance the 
     controller's stability and performance by providing additional corrective 
     action to counteract uncertainties and disturbances.
 
-    \temp{Virtual control}
     To simplify computations, we can use a virtual force $f_v$:
     \begin{equation}
         f_v = T\nu
     \end{equation}
     which can represent the desired behavior of the system without introducing input uncertainty.
 
-    \temp{Inverse dynamics}
-    Using the inverse dynamics approach \ref{eqn:inverse_dynamics}, we can apply the outer loop 
+    Using the inverse dynamics approach \ref{eqn::inverse_dynamics}, we can apply the outer loop 
     controller to partially linearize the system with model estimates:
     \begin{equation}
         \hat{f} = \hat{k}f_v = \hat{M}a + \hat{h}(r, v)
@@ -411,28 +380,26 @@
     Substitution to the dynamics \ref{eqn::apprx_dynamics} yields the equation:
     \begin{equation}
         \begin{aligned}
-        \dot{v} &= M^{-1}(\frac{k}{\hat{k}}\hat{h}(r, v) - h(r, v)
-         - \delta) + \frac{k}{\hat{k}}M^{-1}\hat{M}a = \\
+        \dot{v} &= \underbrace{M^{-1}(\frac{k}{\hat{k}}\hat{h}(r, v) - h(r, v)
+         - \delta)}_{F(r, v)} + \underbrace{\frac{k}{\hat{k}}M^{-1}\hat{M}}_{K}a = \\
         &= F(r, v) + Ka
         \end{aligned}
     \end{equation}
     where the terms $F(r,v)$ and $K$ represent dynamical and inertial uncertainties.
 
-    \temp{Sliding condition}
-    The time derivative of $s$ is connected to dynamics as follows:
+    The time derivative of $\mathbf{s}$ is connected to dynamics as follows:
     \begin{equation}
     \dot{s} = \dot{\tilde{v}} + \lambda \tilde{v} = 
     a_n - \dot{v} = a_n - F - K(a_n + a_s) = w - Ka_s 
     \end{equation}
     with error function $w(r, v) = (I - K)a_n - F(r, v) $
 
-    Substitution to sliding condition yields:
+    Substitution to sliding condition \ref{eq::sliding} yields:
     \begin{equation}
     s^Tw- s^TKa_s  \leq \|s\|\|w\| - s^TKa_s  \leq - \eta \|s\|
     \label{eqn::sliding_condition}
     \end{equation}
 
-    \temp{Apply matrix property}
     Let us recall that for any symmetric matrix P:
     \begin{equation}
         \label{eqn:property}
@@ -440,22 +407,18 @@
     \end{equation}
     with $\sigma_{min}$ and $\sigma_{max}$ being the largest and smallest 
     eigenvalues of matrix P.
-    % \begin{figure}[H]
-    %     \centering\includegraphics*[width=0.5\textwidth]{matrix_boundary}
-    %     \caption{The boundaries for the matrix.}
-    %     \label{image:matrix_boundary}
-    % \end{figure}
 
-    Thus, we can use property \ref*{eqn:property} to choose the stabilizing control $a_s$ as:
+    Thus, we can use property \ref*{eqn:property} to choose the stabilizing control 
+    $\mathbf{a_s}$ as:
     \begin{equation}
-        a_s = \frac{\alpha \hat{k}}{\sigma_{max}^2}\hat{M}^{-1}\frac{s}{\|s\|} = 
+        a_s = \frac{\alpha \hat{k}}{\sigma_{min}^2}\hat{M}^{-1}\frac{s}{\|s\|} = 
         \rho \frac{s}{\|s\|} 
     \end{equation}
-    where $\sigma_{max}$ is maximal singular value of $M^{-1}$
+    where $\sigma_{min}$ is minimal singular value of $M^{-1}$
     which provide:
     \begin{equation}
         \|s\|\|w\| - s^TKa_s \leq 
-        \|s\|\|w\| - k \frac{\alpha}{\sigma^2_{max}\|s\|}s^TM^{-1}s \leq 
+        \|s\|\|w\| - k \frac{\alpha}{\sigma^2_{min}\|s\|}s^TM^{-1}s \leq 
         \|s\|\|w\| - \alpha k \|s\|
     \end{equation}
     but by definition $k_{min} < k < k_{max}$, therefore
@@ -478,7 +441,6 @@
     \end{cases}
     \end{equation}
 
-    \temp{Solve chattering problem}
     In order to reduce chattering, the controller above is effectively smoothed using
     the boundary layer:
     \begin{equation}
@@ -492,18 +454,16 @@
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.6\textwidth]{boundary}
-        \caption{The sliding mode scheme with boundary layer}
+        \caption{Sliding Mode Control Scheme with the Addition of a Boundary Layer to Reduce Chattering}
         \label{image:boundary}
     \end{figure}
 
-    \temp{Nominal torque}
     The nominal control $a_n$ can be 
     designed in a form of PD controller:
     \begin{equation}
         a_n = - K_p\tilde{r}^B - K_d\tilde{v}^B
     \end{equation}
 
-    \temp{Final law}
     The resulting controller is then given as follows:
     \begin{align} 
         &\nu = \hat{B}^{+}(\hat{M}(a_n + a_s) + \hat h(r, v))
@@ -517,7 +477,7 @@
         \end{cases}
     \end{align}
 
-    \subsection{Conclusion}
+    \subsection{Summary}
 
     Although sliding mode control has proven to be an effective approach, 
     there are certain drawbacks associated with its use. These include 
@@ -552,8 +512,8 @@ Recalling a sliding mode controller \ref{eqn::sliding_mode}:
     \hat M(a_n + a_s)  + \hat h (r, v) = \hat B \nu
 \end{equation*}
 This equation represents the controller dynamics, where $\hat{M}$, $\hat{h}$, 
-and $\hat{B}$ are system matrices, $a_n$ represents nominal control inputs, 
-$a_s$ denotes the sliding mode control inputs, and $\nu$ represents the overall control input.
+and $\hat{B}$ are approximated system matrices, $a_n$ represents nominal control inputs, 
+$a_s$ denotes the sliding mode control inputs, and $\nu$ represents the virtual control input.
 
 In sliding mode control, a key condition, known as the sliding condition, 
 ensures the system trajectories converge to a specified surface. 
@@ -631,7 +591,7 @@ adapt to changing conditions and disturbances.
 % However, we need to discover if $\dot V = 0$ even while $e \neq 0$.
 % According to LaSalle theorem ...
 
-\section{Summary}
+\subsection{Summary}
 
 % \todo{\#TODO Summarize the main findings of the chapter.}
 
