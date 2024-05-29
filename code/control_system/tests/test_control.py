@@ -1,6 +1,6 @@
 from mj_simulator.bluerov_sim import BluerovSim
 from mj_simulator.routines.logger import Logger
-from control_system.controllers import SlidingMode, ModelBasedPID
+from control_system.controllers import SlidingMode, ModelBasedPID, RobustQP
 from mj_simulator.routines.plotter import plot
 from time import perf_counter
 import numpy as np
@@ -12,9 +12,9 @@ v0 = np.array([1, 0, 0, 0, 0, 0])
 sim = BluerovSim("../assets/bluerov.xml",
                 update_freq=500,
                 freq=2000,
-                buoyancy = 1.01,
+                # buoyancy = 1.05,
                 # stream = [0.3, -0.2, 0.1],
-                voltage=14,
+                # voltage=14,
                 render=True,
                 by_step=True,
                 q0=q0, v0=v0)
@@ -30,7 +30,7 @@ control = np.zeros(sim.nu)
 # Set the desired position for the robot's joints.
 q_des = np.array([0, 0, 0, 1, 0, 0, 0])
 
-controller = ModelBasedPID(model=sim.model)
+controller = RobustQP(model=sim.model)
 
 logger = Logger(freq=500)
 logger.set_labels(['t', 'x', 'v', 'u'])

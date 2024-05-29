@@ -1,5 +1,5 @@
 from .quat_routines import quat_error
-from config.control_config import heavy_inputs_inv
+from config.control_config import heavy_inputs_inv, heavy_mapping
 import numpy as np
 import cvxpy as cp
 from simple_pid import PID
@@ -14,7 +14,8 @@ class Controller():
         raise NotImplementedError
 
     def force2control(self, f):
-        u = heavy_inputs_inv@(f)
+        # u = heavy_inputs_inv@(f)
+        u = f
 
         coefs = [1.43147096e-04, -9.93856445e-05, -9.06394750e-03, -
                  1.52520646e-04, 3.14036521e-01, -1.97997024e-02]
@@ -71,45 +72,86 @@ class ModelBasedPID(Controller):
         return self.force2control(u_pid + u_m)
 
 
+# class SlidingMode(Controller):
+#     def __init__(self, model):
+#         super().__init__(model)
+
+#         self.srb = SRB(model)
+#         self.l = 1
+#         self.phi = [1.3, 1.3, 1.3, 3.8, 3.8, 3.8]  # error bounds
+#         self.K = [6.56887255,  5.97797786,  7.92404967, 21.88823654, 15.03985469,
+#                   17.54285714]  # control gains
+
+#     def control(self, x, dx, x_d, dx_d=None):
+
+#         res_x = np.zeros(7)  # residual
+#         res_x[:3] = x[:3] - x_d[:3]
+#         res_x[3:] = quat_error(x[3:], x_d[3:])
+
+#         e_b = self.srb.J(x).T@res_x
+
+#         if dx_d is None:
+#             s = dx + self.l*e_b
+#         else:
+#             s = dx - dx_d + self.l*e_b
+
+#         a_r = - self.l*e_b  # ds/dt=0
+
+#         u_hat = self.srb.M@a_r + \
+#             self.srb.C(dx)@dx + self.srb.D(dx)@dx + \
+#             self.srb.g(x)
+
+#         s_sign = np.sign(s)
+
+#         for i in range(len(s_sign)):
+#             if abs(s[i]) < self.phi[i]:
+#                 s_sign[i] = s[i]/self.phi[i]
+
+#         # added constant for smaller error
+#         u_s = -5*np.diag(self.K)*self.srb.M@s_sign
+
+#         return self.force2control(u_hat + u_s)
+    
 class SlidingMode(Controller):
     def __init__(self, model):
         super().__init__(model)
 
         self.srb = SRB(model)
         self.l = 1
-        self.phi = [1.3, 1.3, 1.3, 3.8, 3.8, 3.8]  # error bounds
-        self.K = [6.56887255,  5.97797786,  7.92404967, 21.88823654, 15.03985469,
-                  17.54285714]  # control gains
+        self.sigma = 1.5
+        self.eps = [0.05, 0.05, 0.05, 0.8, 0.8, 0.8]  # error bounds
+        self.alpha = 93
 
     def control(self, x, dx, x_d, dx_d=None):
 
         res_x = np.zeros(7)  # residual
         res_x[:3] = x[:3] - x_d[:3]
         res_x[3:] = quat_error(x[3:], x_d[3:])
+        r_tilde = self.srb.J(x).T@res_x  # in body frame
+        v_tilde = dx
+        if dx_d is not None:
+            v_tilde = dx - dx_d
 
-        e_b = self.srb.J(x).T@res_x
+        # p-regulator part -> pd or pid
+        a_n = -self.l*r_tilde
 
-        if dx_d is None:
-            s = dx + self.l*e_b
-        else:
-            s = dx - dx_d + self.l*e_b
-
-        a_r = - self.l*e_b  # ds/dt=0
-
-        u_hat = self.srb.M@a_r + \
+        u_n = self.srb.M@a_n + \
             self.srb.C(dx)@dx + self.srb.D(dx)@dx + \
             self.srb.g(x)
-
+        
+        # sliding part
+        s = v_tilde + self.l*r_tilde
         s_sign = np.sign(s)
 
         for i in range(len(s_sign)):
-            if abs(s[i]) < self.phi[i]:
-                s_sign[i] = s[i]/self.phi[i]
+            if abs(s[i]) < self.eps[i]:
+                s_sign[i] = s[i]/self.eps[i]
 
-        # added constant for smaller error
-        u_s = -5*np.diag(self.K)*self.srb.M@s_sign
+        rho = self.alpha/(self.sigma)**2*self.srb.M_inv
+        a_s = rho@s_sign
+        u_s = -self.srb.M@a_s
 
-        return self.force2control(u_hat + u_s)
+        return self.force2control(u_n + u_s)
 
 
 class RobustQP(Controller):
@@ -118,54 +160,48 @@ class RobustQP(Controller):
 
         self.srb = SRB(model)
         self.l = 1
-        self.phi = [1.3, 1.3, 1.3, 3.8, 3.8, 3.8]  # error bounds
-        self.K = [6.56887255,  5.97797786,  7.92404967, 21.88823654, 15.03985469,
-                  17.54285714]  # control gains
 
     def control(self, x, dx, x_d, dx_d=None):
 
         res_x = np.zeros(7)  # residual
         res_x[:3] = x[:3] - x_d[:3]
         res_x[3:] = quat_error(x[3:], x_d[3:])
+        r_tilde = self.srb.J(x).T@res_x  # in body frame
+        v_tilde = dx
+        if dx_d is not None:
+            v_tilde = dx - dx_d
 
-        e_b = self.srb.J(x).T@res_x
+        # p-regulator part -> pd or pid
+        a_n = -self.l*r_tilde
+        
+        # sliding part
+        s = v_tilde + self.l*r_tilde
 
-        if dx_d is None:
-            s = dx + self.l*e_b
-        else:
-            s = dx - dx_d + self.l*e_b
+        R_a = np.eye(6)
+        R_u = np.eye(8)
+        gamma_1 = 5
 
-        a_r = - self.l*e_b  # ds/dt=0
-
-        a_n = self.srb.M@a_r + \
-            self.srb.C(dx)@dx + self.srb.D(dx)@dx + \
-            self.srb.g(x)
-
-        R_a = np.eye()
-        R_u = np.eye()
-        gamma_1 = 1
-        gamma_2 = 1
-
-        a_s_prev = np.zeros()
-        u_min = -100
-        u_max = 100
+        u_min = -5.4
+        u_max = 7
+        w = 37
+        K = np.diag([0.36]*6)
 
         # Construct the problem.
-        a_s = cp.Variable(a_s)
-        u = cp.Variable(u)
-        d = cp.Variable(d)
+        a_s = cp.Variable(6)
+        u = cp.Variable(8)
+        d = cp.Variable(1)
 
         objective = cp.Minimize(cp.quad_form(a_s, R_a) + cp.quad_form(u, R_u)
-                                + gamma_1*cp.power(d, 2)
-                                + gamma_2*cp.norm(a_s - a_s_prev, 1))
-        # TODO find eta and w
-        constraints = [5*s.T@np.diag(self.K)@a_s <= -eta*cp.norm(s, 1) + \
-                       cp.norm(s, 1) * cp.norm(w, 1),
+                                + gamma_1*cp.power(d, 2))
+        
+        constraints = [-s.T@K@a_s >= -5*cp.norm(s, 1) - \
+                       cp.norm(s, 1) * w + d,
                        self.srb.M@(a_s + a_n) +
                        self.srb.C(dx)@dx + self.srb.D(dx)@dx +
-                       self.srb.g(x) == u,  # not u, but Bu but how?
+                       self.srb.g(x) == heavy_mapping@u,
                        u_min <= u,
                        u_max >= u]
+        
         prob = cp.Problem(objective, constraints)
         prob.solve()
 
