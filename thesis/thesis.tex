@@ -1,8 +1,9 @@
 \documentclass[oneside,final,14pt,a4paper]{extreport}
 
 % set the compiler XeLatex to use fontspec package
-\usepackage{fontspec}
-\setmainfont[Mapping=tex-text]{Times New Roman}
+% \usepackage{fontspec}
+% \setmainfont[Mapping=tex-text]{Times New Roman}
+\usepackage{tempora}
 
 \usepackage{vmargin}
 \setpapersize{A4}
@@ -58,7 +59,7 @@
 \usepackage{multirow,array}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{hyperref}
+% \usepackage{hyperref}
 \usepackage{paralist}
 \usepackage{listings}
 \usepackage{zed-csp}
@@ -72,12 +73,14 @@
 \usepackage{chngcntr}
 \usepackage{upgreek} 
 \usepackage{bm}
-\usepackage{hyperref}
+% \usepackage{hyperref}
 \usepackage{setspace}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{longtable}
 \usepackage[font=singlespacing, labelfont=bf]{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \counterwithout{table}{chapter}
 \renewcommand{\thetable}{\Roman{table}}
 %Hints
@@ -132,18 +135,24 @@
 \newcommand\todo[1]{\textcolor{red}{#1}}
 \newcommand\temp[1]{\textcolor{blue}{#1}\\}
 
+\usepackage[hidelinks]{hyperref}
+
 \usepackage{tabularx}
 \newlength{\conditionwd}
 \newenvironment{conditions}[1][where:]
   {%
    #1\tabularx{\textwidth-\widthof{#1}}[t]{
-     >{$}l<{$} @{${}={}$} X@{}
+     >{$}l<{$} @{${}\quad{}$} X@{}
    }%
   }
 
+\usepackage{tabularray}
+\hypersetup{colorlinks=true, allcolors=black, citecolor=black}
+
 \begin{document}
 
-\includepdf[pages=-, offset=75 -75]{title.pdf}
+% \includepdf[pages=-, offset=75 -75]{title.pdf}
+\includepdf[pages=-,offset=25.5mm -25.5mm]{title.pdf}
 
 \tableofcontents
 \listoftables
@@ -152,13 +161,14 @@
 
 \newpage
 \include{chapters/abstract}
-\setcounter{page}{1} % set manually an actual number from which introduction starts
+\setcounter{page}{9} % set manually an actual number from which introduction starts
 \include{chapters/chapter1}
 \include{chapters/chapter2}
 \include{chapters/chapter3}
 \include{chapters/chapter4}
 \include{chapters/chapter5}
 \include{chapters/chapter6}
+\include{chapters/chapter7}
 
 
 %% REFERENCES

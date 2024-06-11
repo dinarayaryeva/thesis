@@ -1,44 +1,219 @@
-\chapter{Evaluation and Discussion}
-\label{chap:eval}
+\chapter{Implementation}
+\label{chap:impl}
 
 \section{System Description}
 
-    \subsection{BlueROV Heavy}
-    Photo
+In this chapter, we detail the implementation of the proposed control scheme for the Remotely Operated Vehicle (ROV) using BlueROV Heavy as the testbed.
 
-    \subsection{Input Mapping}
-    B(inputs)
+\subsection{BlueROV Heavy}
 
-    \subsection{Simulator}
-    mapping and plots
+    The BlueROV Heavy is a versatile and robust underwater vehicle equipped with multiple thrusters, sensors, and control units. It is designed for tasks such as underwater exploration, inspection, and research. The primary components of the BlueROV Heavy include:
 
-    \subsection{Codebase}
-    implemented in mujoco
+    \begin{itemize}
+        \item \textbf{Thrusters}: Eight thrusters provide six degrees of freedom (DOF) for precise maneuvering.
+        \item \textbf{Sensors}: Equipped with a variety of sensors, including an IMU (Inertial Measurement Unit), depth sensor, and cameras for navigation and data collection.
+        \item \textbf{Control Unit}: An onboard computer system that processes sensor data and executes control algorithms.
+    \end{itemize}
 
-\section{Controllers}
+    The physical layout and the thruster configuration of the BlueROV Heavy, that allows for complex underwater maneuvers, are shown in Figure \ref{image:rov}.
 
-    \subsection{Inverse dynamics}
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics*[width=0.4\textwidth]{rov}
+            \includegraphics*[width=0.4\textwidth]{rov_heavy}
+        \end{center}
+        \caption{The BlueROV Heavy and its thruster configuration. The left image shows the basic layout, while the right image highlights the heavy configuration with additional thrusters for enhanced maneuverability. Adopted from \cite{bluerobotics}}
+        \label{image:rov}
+    \end{figure}
 
-    Control law
+    The system parameters required to define the dynamics model (\ref{eq::matrix_dynamics}) were obtained from the STL model. These parameters are presented in \tab{tab::rov} and include values for the mass, weight, buoyancy, center of buoyancy, and moments of inertia.
 
-    PID Coefficients
+    \begin{table}[h]
+    \captionsetup{justification=centering}
+    \caption{Initial parameter values for rigid body dynamics and restoring forces}
+    \begin{center}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\ \hline
+        Mass & 12.5 kg \\ \hline
+        Weight & 125 N \\ \hline
+        Buoyancy & 130 N \\ \hline
+        Center of Buoyancy & 0.1 m \\ \hline
+        Moment of Inertia (Roll) & 0.1 kg m$^2$ \\ \hline
+        Moment of Inertia (Pitch) & 0.1 kg m$^2$ \\ \hline
+        Moment of Inertia (Yaw) & 0.2 kg m$^2$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \label{tab::rov}
+    \end{table}
 
-    Plots
+    The viscous damping parameters, which are essential for modeling the resistance forces acting on the ROV, were estimated and are shown in \tab{tab::damping}. 
+    \begin{table}[h]
+    \captionsetup{justification=centering}
+    \caption{Estimated viscous damping parameters}
+    \begin{center}
+    \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Type} & \textbf{Value} \\ \hline
+    Linear & $[10, 10, 10, 0, 0, 0]^\top$ \\
+    Quadratic & $[0.1, 0.1, 0.1, 0, 0, 0]^\top$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \label{tab::damping}
+    \end{table}
 
-    \subsection{Sliding mode}
+\subsection{Input Mapping}
 
-    Control law
+    Input mapping for the BlueROV Heavy utilizes a thrust 
+    configuration matrix $T$ and DC-gain transfer function $\phi(u)$ to determine the forces and moments applied by the thrusters.
+    \begin{equation*}
+        T = \begin{bmatrix}
+            -0.7 & -0.7 & 0.7 & 0.7 & 0 & 0 & 0 & 0 \\
+            0.7 & -0.7 & 0.7 & -0.7 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & -1 & 1 & -1 & 1 \\
+            0 & 0 & 0 & 0 & 0.218 & 0.218 & 0.218 & 0.218 \\
+            0 & 0 & 0 & 0 & 0.12 & -0.12 & -0.12 & 0.12 \\
+            0.004 & -0.004 & -0.004 & 0.004 & 0 & 0 & 0 & 0 \\
+            \end{bmatrix}
+    \end{equation*}
 
-    PID Coefficients + others
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics*[width=0.6\textwidth]{apprx}
+        \end{center}
+        \caption{Thrust characteristics showing the relationship between control input and generated thrust.}
+        \label{fig:thrust}
+    \end{figure}
 
-    Plots
+    The nominal function \(\phi_0(u)\) and its inverse \(\phi^{-1}_0(\mu)\) are derived based on thruster characteristics, as illustrated in \pic{fig:thrust}:
+    \begin{equation*}
+    \begin{aligned}
+        \phi_0(u_i) &= 3.681u_i^3 + 0.839u_i^2 + 2.548u_i 
+        - 0.019 \\
+        \phi_0^{-1}(\mu_i) &= 1.431 \times 10 ^{-4}\mu_i^5 - 9.938\times 10 ^{-5}
+            \mu_i^4 - 9.064 \times 10 ^{-3} \mu_i^3 -\\
+            &- 1.525\times 10 ^{-4} \mu_i^2 + 0.314 \mu_i - 0.02
+    \end{aligned}
+    \end{equation*}
 
-    \subsection{Optimization based}
+\section{Code Development}
 
-    Control law
+\subsection{Simulator}
 
-    Plots
+    The simulation environment for the BlueROV Heavy is built on the open-source MuJoCo physics engine by DeepMind. This provides a reliable platform for testing and validating control strategies under various conditions without the need for real-world testing. 
 
-    \subsection{Comparison}
+    The engine also includes features to simulate environmental factors such as water currents, waves, and obstacles.
+
+\subsection{Codebase}
+
+    The control system is primarily developed in Python, utilizing a variety of libraries such as NumPy, cvxpy, SciPy, and Matplotlib. These libraries facilitate numerical computations, convex optimization, scientific computing, and data visualization, respectively. 
+
+    To ensure efficient communication between different components, multithreading is employed within the codebase. The modular design of the codebase allows for seamless updates and maintenance.
+
+    \begin{figure}[H]
+        \centering\includegraphics*[width=0.7\textwidth]{scheme}
+        \caption{A schematic overview of the control system architecture, showing the interaction between various components.}
+        \label{image:scheme2}
+    \end{figure}
+
+    The system comprises two main parts (\pic{image:scheme2}):
+    \begin{itemize}
+        \item \textbf{The Control System}: This involves an SRB modeling module for calculating inverse dynamics, a controller, and an OSQP solver for solving optimization problems.
+        \item \textbf{The ROV section}: This includes BlueROVSim, a wrapper over a physics engine for accurate underwater environment simulation, and the MuJoCo Simulator, providing a visual representation of the output.
+    \end{itemize}
+    This setup allows for comprehensive simulation and control of the BlueROV Heavy.
+
+    The implementation of the control algorithms was carried out in a structured and modular manner to ensure flexibility and ease of testing.
+
+\section{Control System}
+
+    \subsection{Inverse Dynamics}
     
-    Plot error norm
+    The inverse dynamics control algorithm calculates the necessary control inputs to achieve desired trajectories by determining forces and moments, and then mapping these to thruster commands.
+
+    The control law can be represented by the equation:
+    \begin{equation*}
+        \nu = B^{+} (M(\dot{v}_{des} - K_p \tilde{r} - K_d \tilde{v}) + h(r, v))
+    \end{equation*}
+
+    The key components of the inverse dynamics control law include the proportional-derivative (PD) coefficients, which were adjusted to minimize tracking errors, as detailed in \tab{table:pid_coefs}.
+    
+    \begin{table}[H]
+        \captionsetup{justification=centering}
+        \caption{PD Coefficients for Inverse Dynamics Control}
+        \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\ \hline
+        $K_p$ & $[4.0, 4.0, 4.0, 4.0, 4.0, 4.0]^\top$ \\
+        $K_d$ & $[0.5, 0.5, 3.5, 1.5, 1.5, 1.0]^\top$\\ \hline
+        \end{tabular}
+        \end{center}
+        \label{table:pid_coefs}
+    \end{table}
+    
+    \subsection{Sliding Mode Control}
+    
+    Sliding Mode Control (SMC) was implemented to enhance robustness against disturbances and model uncertainties. SMC defines a sliding surface based on desired state variables.
+    
+    The control force $a_s$ drives the system state towards this surface, maintaining robust performance despite external disturbances:
+    \begin{equation*} 
+        a_s = 
+        \begin{cases}
+            \frac{\alpha \hat{k}}{\sigma_{min}^2}\hat{M}^{-1} \frac{s}{\|s\|}, \quad \|s\| >\epsilon\\
+            \frac{\alpha \hat{k}}{\sigma_{min}^2}\hat{M}^{-1} \frac{s}{\epsilon}, \quad \|s\| \leq\epsilon
+        \end{cases}
+    \end{equation*}
+    
+    The transition from conventional inverse dynamics to sliding mode control involves the tuning of several key parameters, as detailed in \tab{table:smc_coefs}.
+    
+    \begin{table}[H]
+        \captionsetup{justification=centering}
+        \caption{Fine-tuned parameters for Sliding Mode Control}
+        \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Parameter} & $\sigma_{min}$ & $\epsilon$ & 
+        $\alpha$ \\ \hline
+        \textbf{Value} & 1.5 & 0.5 & 93.0\\ \hline
+        \end{tabular}
+        \end{center}
+        \label{table:smc_coefs}
+    \end{table}
+    
+    \subsection{Optimization-based Control}
+    
+    The optimization-based control scheme dynamically adjusts control parameters using convex optimization techniques. A key aspect of this method is the definition of an objective function and constraints, which are optimized using a convex optimization solver. 
+    
+    The optimization problem is defined as:
+    \begin{equation*}
+        \begin{aligned}
+        \min_{a_s, \nu, d} \quad & a_s^T R_a a_s + \nu^T R_\nu \nu +
+        \gamma_0^2 d + \gamma_1 \|a_s - a_{s (prev)}\|\\
+        \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + d\\
+        &\hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v)) \\
+        &\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max}) \\
+        \end{aligned}
+    \end{equation*}
+    
+    \tab{table:opt_coefs} lists the parameters used in the optimization process.
+    
+    \begin{table}[H]
+        \captionsetup{justification=centering}
+        \caption{Parameters for Optimization-based Control}
+        \begin{center}
+        \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\ \hline
+        $R_a$ & $I_{6 \times 6}$ \\
+        $R_u$ & $0.01 \cdot I_{8 \times 8}$ \\
+        $\gamma_0$ & 0.3 \\
+        $\gamma_1$ & 0.2 \\
+        $u_{min}$ & -1.0 \\
+        $u_{max}$ & 1.0 \\
+        $\|w\|_{max} $ & 37.0 \\
+        $K_{max}$ & $15.0 \cdot I_{6 \times 6}$\\ \hline
+        \end{tabular}
+        \end{center}
+        \label{table:opt_coefs}
+    \end{table}

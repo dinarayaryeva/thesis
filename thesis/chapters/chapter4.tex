@@ -50,9 +50,9 @@
     and external factors. Two primary types of modeling inaccuracies 
     are defined by J. Slotine and W. Li \cite{slotine_applied}:
     \begin{enumerate}
-        \item \textbf{Structured} (or parametric) \textbf{uncertainties} : 
+        \item Structured (or parametric) uncertainties : 
         associated with errors in the terms included in the model
-        \item \textbf{Unstructured uncertainties} (or unmodeled dynamics) : 
+        \item Unstructured uncertainties (or unmodeled dynamics) : 
         linked to inaccuracies in the system's order
     \end{enumerate}
 
@@ -123,18 +123,17 @@
         M_B \dot{\bar{v}}^B + C_B(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)
          + \delta = B\phi_0(u)
     \end{equation}
+    
     For the sake of simplicity, we omit some redundant notations: $*_B$, $\bar *$, $*^B$ and $*^N$. 
     However, the meaning behind these notations remains valid, 
-    whereas the formulas become more comprehensible:
-    \begin{equation}
-        M \dot{v} + C(v)v + D(v)v + g(r) + \delta = B\phi_0(u)
-    \end{equation}
+    whereas the formulas become more comprehensible.
+
     Additionally, let us describe the internal and external forces acting on the 
     body using the single nonlinear term $h(r,v)$:
     \begin{equation}
         h(r,v) = C(v)v + D(v)v + g(r)
     \end{equation}
-    Finally, the approximated system dynamics is defined as:
+    Finally, the approximated system dynamics equation is defined as:
     \begin{equation}
         M \dot{v} + h(r, v) + \delta = B\phi_0(u)
         \label{eqn::apprx_dynamics}
@@ -153,15 +152,9 @@
 
 \section{Inverse dynamics}
 
-    The nonlinear control method, known as inverse dynamics, tracks a trajectory by calculating 
-    the joint actuator torques required to achieve a specific trajectory.
-    This approach relies on exact cancellation of nonlinearities in the robot equation of motion.
+    The nonlinear control method, known as inverse dynamics, tracks a trajectory by calculating the joint actuator torques required to achieve a specific trajectory. This approach relies on exact cancellation of nonlinearities in the robot equation of motion.
 
-    The inverse dynamics control is directly related to the solution of the inverse
-    dynamics problem. By appropriately inverting the dynamic model, a control law can 
-    cancel the nonlinear part of the dynamics, decouple the interactions 
-    between the regulated variables, and specify the time characteristics of the decay of the 
-    task errors.
+    The concept of inverse dynamics control is closely linked to solving the inverse dynamics problem. By appropriately inverting the dynamic model, a control law can effectively cancel out the nonlinear dynamics, isolate the interactions between the controlled variables, and specify the time characteristics of the decay of task errors
 
     \subsection{Virtual Control}
     To simplify the control process, we can define a virtual control
@@ -188,7 +181,6 @@
         a = \dot{v}_{des} - K_p \tilde{r} - K_d \tilde{v}
     \end{equation}
 
-    % # TODO Change
     The equation \ref{eqn::inverse_dynamics} becomes more complex when system parameters and disturbances are 
     unknown:
     \begin{equation}
@@ -201,57 +193,65 @@
     \end{equation}
 
     \subsection{Error Analysis}
-    In terms of tracking error $e = \tilde{r}$, the following system can 
-    be designed:
-    \begin{equation}
-    \begin{aligned}
-        e &= \tilde{r} \\
-        \dot e &= \tilde{v} \\
-        \ddot e &= \dot{\tilde{v}} = \dot{v}_{des} - \dot{v} = \\
-        &= \dot{v}_{des} - M^{-1}(B\hat{B}^{+}h - \hat h - \delta) + 
-        M^{-1}B\hat{B}^{+}\hat{M}(\dot{v}_{des} - K_pe - K_d \dot e)
-    \end{aligned}
-    \end{equation}
-    Hence, the error dynamics can be represented in a form of second order differential 
-    equation as:
-
-    \todo{Add disturbance function $d(e, \dot e, t)$}
+    In terms of tracking error $e = \tilde{r}$, we can design the following system:
     \begin{equation}
         \begin{aligned}
-            \ddot e + A_1 \dot e + A_0 e  &= (W-I)\dot{v}_{des}
-            - M^{-1}(B\hat{B}^{+}h - \hat h - \delta)\\
-            &=d(e, \dot{e}, \dot{v}_{des})
+        e &= \tilde{r} \\
+        \dot{e} &= \tilde{v} \\
+        \ddot{e} &= \dot{\tilde{v}} =\\
+        &= \dot{v}_{des} - \dot{v} =\\
+        &= \dot{v}_{des} - M^{-1}(B\hat{B}^{+}h - \hat{h} - \delta) + M^{-1}B\hat{B}^{+}\hat{M}(\dot{v}_{des} - K_pe - K_d \dot{e})
         \end{aligned}
-    \end{equation}
-    with $W = M^{-1}B\hat{B}^{+}\hat{M}$, $A_0 = WK_p$ and $A_1 = WK_d$
-
-    \todo{State space}
+        \end{equation}
+    Hence, the error dynamics can be represented in the form of a second-order differential equation as:
     \begin{equation}
-        \dot x = Ax + Bd
+    \begin{aligned}
+        \ddot e + A_1 \dot e + A_0 e  &= (W-I)\dot{v}_{des}
+        - M^{-1}(B\hat{B}^{+}h - \hat h - \delta) =\\
+        &=d(e, \dot{e}, \dot{v}_{des})
+    \end{aligned}
     \end{equation}
+    with $W = M^{-1}B\hat{B}^{+}\hat{M}$, $A_0 = WK_p$ and $A_1 = WK_d$.
 
-    $$
-    x = \begin{bmatrix} e \\ \dot e \end{bmatrix} 
-    $$
-
-    $$ A = \begin{bmatrix} 0_{6 \times 7} & I_{6 \times 6} \\ -A_0 & -A_1 \end{bmatrix}$$
-
-    $$ B = \begin{bmatrix} 0_{6 \times 6} \\ I_{ 6 \times 6} \end{bmatrix}$$
-    \todo{Discretization(wiki), analytical solution}
-
+    In state-space form, we can express the error dynamics as:
     \begin{equation}
-        x = e^{At}x(0) + \int_0^t e^{A(t - \tau)}Bd(\tau)\tau
+        \dot{x} = Ax + Bd
     \end{equation}
-
-    \todo{Find bounds -> define value under the integral}
+    where
+    \[
+    x = \begin{bmatrix} e \\ \dot{e} \end{bmatrix}, \quad
+    A = \begin{bmatrix} 0_{6 \times 6} & I_{6 \times 6} \\ -A_0 & -A_1 \end{bmatrix}, \quad
+    B = \begin{bmatrix} 0_{6 \times 6} \\ I_{6 \times 6} \end{bmatrix}
+    \]
+    The analytical solution of the state-space equation is given by:
+    \begin{equation}
+        x(t) = e^{At}x(0) + \int_0^t e^{A(t - \tau)}Bd(\tau) \, d\tau
+    \end{equation}
+    To find the bounds on the error, we assume that \( (e, \dot{e}, \dot{v}_{des}) \) is bounded, i.e., \( \|d\| \leq D \), and derive:
+    \begin{equation}
+        \|x(t)\| \leq C e^{-\alpha t} \|x(0)\| + \int_0^t C e^{-\alpha (t - \tau)} \|B\| D \, d\tau
+    \end{equation}
+    Evaluating the integral, we get:
+    \begin{equation}
+        \|x(t)\| \leq C e^{-\alpha t} \|x(0)\| + \|B\| D C \left[ \frac{1 - e^{-\alpha t}}{\alpha} \right]
+    \end{equation}
+    As \( t \to \infty \), the exponential terms decay to zero, and we get:
+    \begin{equation}
+        \|x(t)\| \leq \frac{C \|B\| D}{\alpha}
+    \end{equation}
+    Since \( x = \begin{bmatrix} e \\ \dot{e} \end{bmatrix} \), the error \( e \) is bounded by:
     \begin{equation}
         \|e\| \leq \frac{\|d\|}{\lambda_{min}(A_0)}
     \end{equation}
-
+    where $\lambda_{min}(A_0)$ is the minimum eigenvalue of $A_0$.
+    
     \subsection{Summary}
-
-    \todo{ Add paragraph about: undefined or big bounds(no bounds on $\dot v_{des}$), 
-    hard to tune, not robust}
+    The inverse dynamics technique, while effective in theory, presents several challenges in practical applications:
+    \begin{itemize}
+        \item \textbf{Undefined or Large Error Bounds}: The error bounds can be large or undefined if $\dot{v}_{des}$ is not properly bounded.
+        \item \textbf{Difficulty in Tuning}: The parameters $K_p$ and $K_d$ require careful tuning to achieve desired performance.
+        \item \textbf{Lack of Robustness}: The method is not robust to parameter uncertainties and external disturbances.
+    \end{itemize}
 
     As a result, the inverse dynamics technique may not be the best option for effectively 
     controlling underwater systems. Further we introduce sliding mode control, which is a robust 
@@ -275,8 +275,8 @@
     it possible to track desired references or trajectories quickly.
 
     \begin{figure}[H]
-        \centering\includegraphics*[width=0.5\textwidth]{sliding_mode}
-        \caption{General Schematic of Sliding Mode Control (SMC)}
+        \centering\includegraphics*[width=0.7\textwidth]{smc}
+        \caption{General Schematic of Sliding Mode Control (SMC). Adopted from \cite{img_smc}}
         \label{image:sliding_mode}
     \end{figure}
 
@@ -290,7 +290,7 @@
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.8\textwidth]{sliding_phases}
-        \caption{Phases of Sliding Mode Control: Reaching Phase and Sliding Phase}
+        \caption{Phases of Sliding Mode Control: Reaching Phase and Sliding Phase. Adopted from \cite{smc_phases}}
         \label{image:sliding_phases}
     \end{figure}
 
@@ -454,7 +454,7 @@
 
     \begin{figure}[H]
         \centering\includegraphics*[width=0.6\textwidth]{boundary}
-        \caption{Sliding Mode Control Scheme with the Addition of a Boundary Layer to Reduce Chattering}
+        \caption{Sliding Mode Control Scheme with the Addition of a Boundary Layer to Reduce Chattering. Adopted from \cite{boundary}}
         \label{image:boundary}
     \end{figure}
 
@@ -479,135 +479,128 @@
 
     \subsection{Summary}
 
-    Although sliding mode control has proven to be an effective approach, 
-    there are certain drawbacks associated with its use. These include 
-    chattering, the discontinuous nature of control, the complex 
-    design of fine-tuning process and no limits on control input. 
-    Nevertheless, ongoing advancements in control theory and 
-    implementation techniques are serving to enhance the value of this method 
-    for a range of engineering applications.
-    
+    Although sliding mode control has proven to be an effective approach, there are certain drawbacks associated with its use:
+    \begin{itemize}
+        \item \textbf{Chattering}: The control signal can exhibit high-frequency oscillations, potentially causing wear and noise in mechanical systems.
+        \item \textbf{Discontinuous Control}: The abrupt switching in the control action can be challenging to implement and may affect actuator performance.
+        \item \textbf{Complex Fine-Tuning}: Designing and adjusting the control parameters can be complex and requires expertise.
+        \item \textbf{Unlimited Control Input}: The method does not inherently limit the control input, which can result in excessively high control efforts.
+    \end{itemize}
+    Nevertheless, ongoing advancements in control theory and implementation techniques are serving to enhance the value of this method for a range of engineering applications.
+        
     While sliding mode control offers robustness in many scenarios, 
     optimization-based control approaches provide an alternative avenue 
     for addressing some of its limitations.
 
 \section{Optimization-based control}
 
-Optimization-based control is a highly promising solution 
-for complex control problems, as it endeavors to discover 
-optimal control inputs that fulfill desired performance 
-criteria while also taking system constraints into account. 
+    Optimization-based control is a highly promising solution 
+    for complex control problems, as it endeavors to discover 
+    optimal control inputs that fulfill desired performance 
+    criteria while also taking system constraints into account. 
 
-In modern engineering applications, the pursuit of flexible and versatile 
-control solutions necessitates the use of optimization techniques. These 
-techniques serve to optimize system performance, incorporate constraints 
-and objectives, and facilitate precise tuning and adaptation within complex systems.
+    In modern engineering applications, the pursuit of flexible and versatile 
+    control solutions necessitates the use of optimization techniques. These 
+    techniques serve to optimize system performance, incorporate constraints 
+    and objectives, and facilitate precise tuning and adaptation within complex systems.
 
-\subsection{Optimization problem}
+    \subsection{Optimization problem}
 
-The core of optimization-based control lies in formulating and solving optimization 
-problems for to the specific dynamics and constraints of the system. 
-Recalling a sliding mode controller \ref{eqn::sliding_mode}:
-\begin{equation*}
-    \hat M(a_n + a_s)  + \hat h (r, v) = \hat B \nu
-\end{equation*}
-This equation represents the controller dynamics, where $\hat{M}$, $\hat{h}$, 
-and $\hat{B}$ are approximated system matrices, $a_n$ represents nominal control inputs, 
-$a_s$ denotes the sliding mode control inputs, and $\nu$ represents the virtual control input.
+    Convex optimization involves minimizing a convex objective function over a convex set. 
+    Quadratic Programming (QP) is a special type of convex optimization where the objective 
+    function is quadratic, and the constraints are linear.
 
-In sliding mode control, a key condition, known as the sliding condition, 
-ensures the system trajectories converge to a specified surface. 
-Mathematically, this condition can be represented as \ref{eqn::sliding_condition}:
-\begin{equation*}
-    s^TKa_s \leq -\eta \|s\| + \|s\|\|w\|
-\end{equation*}
-Here, $s$ represents the sliding surface, $K$ is a gain matrix, $\eta$ is a 
-positive constant, and $w$ represents disturbance.
+    The standard form of a Quadratic Programming problem is given by:
+    \begin{equation}
+    \begin{aligned}
+    & \underset{x \in R^n}{\text{minimize}}
+    & & \frac{1}{2} x^T Q x + c^T x \\
+    & \text{subject to}
+    & & A x \leq b, \\
+    & & & E x = d,
+    \end{aligned}
+    \end{equation}
+    \begin{conditions}
+        x & is the vector of variables to be optimized; \\
+        Q & is a symmetric positive semidefinite 
+        matrix;\\
+        c & is a vector of linear coefficients;\\
+        A, b & coefficients and bounds of the inequality constraints; \\
+        E, d & coefficients and right-hand side of the equality constraints.
+    \end{conditions}
+    \vspace{0.5cm}
+    The above formulation sets the stage for applying optimization-based control techniques to practical problems.
 
-General control optimization can be framed as a Quadratic Programming (QP) 
-problem, aiming to minimize a cost function subject to system dynamics 
-and constraints. The basic form of the optimization problem is as follows:
-\begin{equation}
-\begin{aligned}
-\min_{a_s, \nu} \quad & a_s^T R_a a_s \\
-\textrm{s.t.} \quad & s^TKa_s \leq -\eta \|s\| + \|s\|\|w\| \\
-&\hat Ma_s - \hat B\nu = -(Ma_n + h(r, v))
-\end{aligned}
-\end{equation}
+    \subsection{Control Law Design}
 
-However, this basic formulation lacks control bounds. 
-To address this, additional constraints are introduced, 
-ensuring that the control inputs remain within feasible bounds:
-\begin{equation}
-\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})
-\end{equation}
+    The core of optimization-based control lies in formulating and solving optimization 
+    problems for to the specific dynamics and constraints of the system. 
+    Recalling a sliding mode controller \ref{eqn::sliding_mode}:
+    \begin{equation*}
+        \hat M(a_n + a_s)  + \hat h (r, v) = \hat B \nu
+    \end{equation*}
+    This equation represents the controller dynamics, where $\hat{M}$, $\hat{h}$, 
+    and $\hat{B}$ are approximated system matrices, $a_n$ represents nominal control inputs, 
+    $a_s$ denotes the sliding mode control inputs, and $\nu$ represents the virtual control input.
 
-Moreover, to alleviate chattering - a phenomenon characterized 
-by high-frequency oscillations in the control signal - an uncertainty 
-term $d$ is introduced to the sliding condition. The resulting relaxed 
-sliding condition yields the following optimization problem:
-\begin{equation}
-\begin{aligned}
-\min_{a_s, \nu, d} \quad & a_s^T R_a a_s + \nu^T R_\nu \nu + \gamma^2 d\\
-\textrm{s.t.} \quad & s^TKa_s \leq -\eta \|s\| + \|s\|\|w\| + d\\
-&\hat Ma_s - \hat B\nu = -(Ma_n + h(r, v)) \\
-&\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})
-\end{aligned}
-\end{equation}
+    In sliding mode control, a key condition, known as the sliding condition, 
+    ensures the system trajectories converge to a specified surface. 
+    Mathematically, this condition can be represented as \ref{eqn::sliding_condition}:
+    \begin{equation*}
+        s^TKa_s \geq \eta \|s\| + \|s\|\|w\|
+    \end{equation*}
+    Here, $s$ represents the sliding surface, $K$ is a gain matrix, $\eta$ is a 
+    positive constant, and $w$ represents disturbance.
 
-Additionally, to smooth the control input and reduce abrupt changes, 
-a penalty term is introduced to penalize large deviations between 
-consecutive control inputs:
+    General control optimization can be framed as a Quadratic Programming (QP) 
+    problem, aiming to minimize a cost function subject to system dynamics 
+    and constraints. The basic form of the optimization problem is as follows:
+    \begin{equation}
+    \begin{aligned}
+    \min_{a_s, \nu} \quad & a_s^T R_a a_s \\
+    \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| \\
+    &\hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v))
+    \end{aligned}
+    \end{equation}
 
-\begin{equation}
-\begin{aligned}
-\min_{a_s, \nu, d} \quad & a_s^T R_a a_s + \nu^T R_\nu \nu +
-\gamma_0^2 d + \gamma_1 \|a_s - a_{s (prev)}\|\\
-\textrm{s.t.} \quad & s^TKa_s \leq -\eta \|s\| + \|s\|\|w\| + d\\
-&\hat Ma_s - \hat B\nu = -(Ma_n + h(r, v)) \\
-&\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max}) \\
-\end{aligned}
-\end{equation}
+    However, this basic formulation lacks control bounds. 
+    To address this, additional constraints are introduced, 
+    ensuring that the control inputs remain within feasible bounds:
+    \begin{equation}
+    \phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})
+    \end{equation}
 
-\subsection{Control Law Design}
+    Moreover, to alleviate chattering, an uncertainty 
+    term $d$ is introduced to the sliding condition. The resulting relaxed 
+    sliding condition yields the following optimization problem:
+    \begin{equation}
+    \begin{aligned}
+    \min_{a_s, \nu, d} \quad & a_s^T R_a a_s + \nu^T R_\nu \nu + \gamma^2 d\\
+    \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + d\\
+    &\hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v)) \\
+    &\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})
+    \end{aligned}
+    \end{equation}
 
-In optimization-based control, the control law is derived from 
-the solution to the optimization problem outlined above. 
-By iteratively solving the optimization problem, optimal control inputs 
-are computed in real-time, allowing the control system to effectively 
-adapt to changing conditions and disturbances.
+    Finally, to smooth the control input and reduce abrupt changes, 
+    a penalty term is introduced to penalize large deviations between 
+    consecutive control inputs:
 
-% % lyapunov candidate
-% In order to prove global stability of the system, let the Lyapunov candidate will be:
-% $$
-%     V = q^TPq
-% $$
-% Let us take the time derivative, we will get
-% $$
-%     \dot V = ...
-% $$
+    \begin{equation}
+    \begin{aligned}
+    \min_{a_s, \nu, d} \quad & a_s^T R_a a_s + \nu^T R_\nu \nu +
+    \gamma_0^2 d + \gamma_1 \|a_s - a_{s (prev)}\|\\
+    \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + d\\
+    &\hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v)) \\
+    &\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max}) \\
+    \end{aligned}
+    \label{eq::final_opt}
+    \end{equation}
 
-% % LaSalle theorem
-% However, we need to discover if $\dot V = 0$ even while $e \neq 0$.
-% According to LaSalle theorem ...
+    \subsection{Summary}
 
-\subsection{Summary}
-
-% \todo{\#TODO Summarize the main findings of the chapter.}
-
-% The methodology of robust control via sliding mode can be formulated in following steps:
-% \begin{itemize}
-%     \item Define the sliding surface $s(y, t)$
-%     \item Derive nominal control $\hat{u}$ (our best guess) that may achieve $\dot{s} = 0$
-%     \item Modify control law by discontinues term that will bring system to sliding mode
-%     by satisfying the sliding condition.
-% \end{itemize}
-
-% \todo{Discuss the limitations and potential extensions of the SMC
-%     controller.}
-
-% \begin{figure}[H]
-%     \centering\includegraphics*[width=0.99\textwidth]{full_rov_state}
-% \end{figure}
-
-
+    Optimization-based control offers a robust framework for addressing complex control 
+    problems by leveraging optimization techniques to derive control laws. 
+    By formulating control tasks as optimization problems, we can incorporate system 
+    dynamics, constraints, and objectives, achieving optimal performance while ensuring 
+    robustness and adaptability.

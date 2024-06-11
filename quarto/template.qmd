@@ -1,0 +1,348 @@
+---
+title: "Enhanced Convex Optimization Driven Sliding Mode Control over Robotic Systems"
+
+# lang: ru # this will translate to russian 
+# language: _language.yml # this is custom language 
+
+callout-icon: false
+subtitle: Dinara Yaryeva
+author:
+  - name: |
+          | Thesis supervisor: Simeon Nedelchev
+          | Innopolis University
+    # id: SN
+    # orcid: 0000-0003-1588-8260
+    # email: s.nedelchev@innopolis.university
+    # affiliation: 
+    #   - name: Innopolis University 
+    #     city: Innopolis
+    #     state: Tatarstan
+    #     url: [https://innopolis.university/en/]
+# copyright: 
+#   holder: Simeon Nedelchev
+date: 14/06/2024
+date-format: medium
+format: 
+    revealjs:
+        # menu: false
+        theme: [default, styles/inno_style.scss]
+        slide-number: true
+        # theme: default
+        # chalkboard: 
+        #     theme: whiteboard
+        #     width: 3
+        # footer: <https://simeon-ned.com/mcp/>
+        hide-inactive-cursor: true
+        default-image-extension: svg
+        # fontsize: 16
+        auto-stretch: false
+        # logo: images/logos/inno.png
+        # css: styles.css
+        # cite-method: biblatex
+        # csl: style.csl
+highlight-style: gruvbox
+
+# revealjs-plugins:
+#   - spotlight
+# crossref:
+#   fig-title: Fig.     # (default is "Figure")
+#   # tbl-title: Tbl     # (default is "Table")
+#   title-delim: —     # (default is ":")
+# funding: "The author received no specific funding for this work."
+bibliography: biblio/references.bib
+csl: styles/ieee.csl
+code-block-border-left: true
+
+---
+## **Background**
+
+- **Expanding Ocean Exploration**\
+Underwater robotic systems are crucial for various applications including underwater exploration, pipeline inspection, and environmental monitoring.
+
+:::: {.columns}
+
+::: {.column}
+
+- **Harsh Environments**\
+The unique challenges of the underwater domain, including high pressure, limited visibility, and complex currents.
+- **Precise Maneuvering**\
+Underwater vehicles are used in a wide range of applications, all of which demand reliable and responsive control.
+
+:::
+
+::: {.column}
+
+![](images/figures/example_rov.jpg)
+
+::: 
+
+::::
+
+## **Challenges in Underwater Vehicle Control**
+
+1. **Complex Hydrodynamics**\
+Underwater vehicles operate in a fluid environment with complex hydrodynamic forces that are difficult to model accurately.
+
+2. **Nonlinear Dynamics**\
+Underwater vehicles exhibit highly nonlinear dynamics, with coupled motions and significant cross-coupling effects.
+
+3. **Disturbance Rejection**\
+Underwater vehicles must contend with external disturbances such as ocean currents, waves, and unexpected obstacles.
+
+
+<!-- ## Rationale for Underwater Vehicle Control -->
+<!-- ## Literature review -->
+
+## **Rationale for Underwater Vehicle Control**
+
+The control of ROVs is challenging due to the nonlinear and unpredictable nature of underwater environments.
+
+Sliding Mode Control (SMC) offers robustness against such uncertainties but is often hindered by chattering, which can cause wear and tear on mechanical components and reduce control accuracy.
+
+Enhancing SMC with convex optimization aims to address these limitations, providing a more stable and precise control mechanism for ROVs.
+
+## **Research Objectives**:
+
+### 1. Develop a comprehensive mathematical model for ROVs.
+
+### 2. Design an SMC scheme enhanced by convex optimization.
+
+### 3. Evaluate the performance through simulation.
+
+
+## **Mathematical Modelling**
+
+:::: {.columns}
+::: {.column}
+- Single rigid body with 6 DOF. \
+Use quaternions for orientation.
+
+- Kinematics and Dynamics:
+$$\dot{\bar{r}}^N=J(\bar{r}^N) \bar{v}^B$$
+$$M \dot{\bar{v}}^B + C(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)= \bar{f}^B$$
+
+- Thrusters Modelling:
+$$\bar{f}^B=T\phi(u)$$
+
+:::
+::: {.column}
+![](images/figures/figs/frames.jpg){width=80% fig-align="right"}
+:::
+::::
+
+- Inherent challenges of ROVs:
+buoyancy, added mass and hydrodynamic damping.
+
+## **Inverse Dynamics**
+
+:::: {.columns}
+::: {.column}
+- Approximated system dynamics and thruster mapping:
+$$
+\begin{aligned}
+&M \dot{v} + h(r, v) + \delta = B\nu \\
+&\bar{f}^B = T(k\phi_0(u)) = B\phi_0(u) = B\nu
+\end{aligned}
+$$
+- Control law:
+$$\nu = \hat{B}^{+}(\hat{M}a + \hat{h}(r, v))$$
+- Outer loop control:
+$$a = \dot{v}_{des} - K_p \tilde{r} - K_d \tilde{v}$$
+:::
+::: {.column}
+![](images/figures/apprx.png)
+:::
+::::
+
+## **Sliding Mode**
+
+:::: {.columns}
+::: {.column}
+- Sliding Surface Design:
+$$s(r, t) = (\frac{d}{dt} + \lambda)^{n-1}\tilde{{r}}$$
+- Sliding Condition: 
+$$s^T\dot{s} < - \eta \|s\|$$
+- Control Law Design:
+$$
+\begin{align*} 
+    &\nu = \hat{B}^{+}(\hat{M}(a_n + a_s) + \hat h(r, v)) \\
+    &a_n = - K_p\tilde{r} - K_d\tilde{v} \\
+    &a_s = 
+    \begin{cases}
+    \rho \frac{s}{\|s\|}, \quad \|s\| > \epsilon\\
+    \rho \frac{s}{\epsilon}, \quad \|s\| \leq \epsilon
+    \end{cases}
+\end{align*}
+$$
+:::
+::: {.column}
+![](images/figures/boundary.png)
+:::
+::::
+
+## **Optimization-based Control**
+
+:::: {.columns}
+::: {.column width=50%}
+Basic optimization problem:
+$$
+\begin{aligned}
+    \min_{a_s, \nu} \quad & a_s^T R_a a_s  + \nu^T R_{\nu} \nu \\
+    \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| \\\
+    & \hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v))
+\end{aligned}
+$$
+Enhanced optimization problem:
+$$
+\begin{aligned}
+    \min_{a_s, \nu, d} \quad & a_s^T R_a a_s  + \nu^T R_{\nu} \nu +
+    \color{lime}{\gamma_0 d^2} + \color{blue}{\gamma_1 \|a_s - a_{s (prev)}\|} \\
+    \textrm{s.t.} \quad & s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + \color{lime}d \\\
+    & \hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v)) \\
+    & \color{red}{\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})}
+\end{aligned}
+$$
+:::
+::: {.column width=10%}
+
+:::
+::: {.column width=40%}
+Properties:
+
+1. SMC optimization
+
+\
+\
+Properties:
+
+1. SMC optimization
+2. <span style="color:red">Control input constraints</span>
+3. <span style="color:lime">Relaxed sliding condition</span>
+4. <span style="color:blue">Smoothing</span>
+:::
+
+::::
+
+## **Implementation**
+
+:::: {.columns}
+
+::: {.column}
+
+- BlueROV Heavy: \
+6DOF ROV with 8 thrusters
+
+::: {layout-ncol=2}
+
+![](images/figures/rov.jpg)
+
+![](images/figures/rov_heavy.jpg)
+
+:::
+:::
+
+::: {.column}
+
+- MuJoCo Simulator by Google DeepMind
+- Python codebase
+
+![](images/figures/scheme.png){width=70% fig-align='top'}
+
+:::
+::::
+
+## **Position Tracking Performance (ID)**
+
+![](images/figures/id_pos.jpeg){.r-stretch fig-align='center'}
+
+The ROV follows the trajectory but exhibits signiﬁcant error in
+the z direction and some stabilization oscillations.
+
+## **Position Tracking Performance (SM)**
+
+![](images/figures/sm_pos.jpeg){.r-stretch fig-align='center'}
+
+Sliding Mode (SM) control provides robust position tracking and handles nonlinearities and uncertainties better than the ID control system.
+
+## **Position Tracking Performance (QP)**
+
+![](images/figures/qp_pos.jpeg){.r-stretch fig-align='center'}
+
+Optimized Sliding Mode (QP) optimizes control inputs for greater accuracy and eﬃciency.
+
+## **Effect from Disturbances (ID)**
+
+![](images/figures/id_error2.jpg){width=60% fig-align='center'}
+
+The ID control system maintains stability but exhibits larger deviations under signiﬁcant disturbances.
+
+## **Effect from Disturbances (SMC)**
+
+![](images/figures/sm_error2.jpg){width=60% fig-align='center'}
+
+The SM control system demonstrates enhanced robustness.
+
+## **Effect from Disturbances (QP)**
+
+![](images/figures/qp_error2.jpg){width=60% fig-align='center'}
+
+The QP control system eﬀectively mitigates the eﬀects of disturbances.
+
+## **Comparison on Tracking Error**
+
+![](images/figures/e_norm.jpg){width=60% fig-align='center'}
+
+Optimized Sliding Mode (QP) delivers the highest accuracy by optimizing control inputs and eﬀectively handling disturbances and nonlinearities.
+
+## **Comparison on Energy Consumption**
+
+![](images/figures/u_norm.jpg){width=60% fig-align='center'}
+
+Optimized Sliding Mode (QP) optimizes thruster usage to achieve the best energy efficiency while maintaining high accuracy and robustness.
+
+
+## **Demo video (no control)**
+
+{{< video images/figures/no_control.mp4 >}}
+
+## **Demo video (QP control)**
+
+{{< video images/figures/qp_control.mp4 >}}
+
+## **Summary of Findings**:
+
+- The optimized Sliding Mode Control (SMC) significantly improved ROV stability and performance.
+- Superior tracking accuracy and robustness compared to traditional methods.
+- Increased robustness to disturbances and model uncertainties.
+
+## **Contributions**:
+
+- Developed a comprehensive mathematical model for ROVs and designed an optimized SMC scheme.
+- Implemented and validated the control schemes on a BlueROV Heavy platform through extensive simulations.
+- Addressed challenges like nonlinearity and actuator wear.
+
+## **Future Research Directions**:
+
+- Optimization:
+Further explore optimization and adaptive control methods.
+- Real-World Testing:
+Conduct real-world experiments and seek industry collaboration.
+- Hybrid Controls:
+Investigate integrating SMC with other advanced control methods.
+
+## **Q&A**
+
+<!-- 
+Questions and Discussion
+
+Invite the audience to ask questions and engage in a discussion about the research.
+
+##  Acknowledgments
+Acknowledgments
+
+Thank you to my supervisor, Simeon Nedelchev, collaborators, and any funding bodies who supported this research.
+
+## References
+Key References
+
+List of primary sources and literature cited in the thesis. (Include detailed references in small text for visibility) -->

@@ -13,9 +13,7 @@ class Controller():
     def control(self, x, dx, x_d):
         raise NotImplementedError
 
-    def force2control(self, f):
-        # u = heavy_inputs_inv@(f)
-        u = f
+    def force2control(self, u):
 
         coefs = [1.43147096e-04, -9.93856445e-05, -9.06394750e-03, -
                  1.52520646e-04, 3.14036521e-01, -1.97997024e-02]
@@ -33,12 +31,12 @@ class ModelBasedPID(Controller):
         super().__init__(model)
 
         self.srb = SRB(model)
-        self.pids = [PID(4, 0.001, 0.5),
-                     PID(4, 0.001, 0.5),
-                     PID(4, 0.001, 3.5),
-                     PID(4, 3.3, 1.5),
-                     PID(4, 0.3, 1.5),
-                     PID(4, 0.3, 1.0)]
+        self.pids = [PID(4, 0.001),
+                     PID(4, 0.001),
+                     PID(4, 0.001),
+                     PID(4, 3.3),
+                     PID(4, 0.3),
+                     PID(4, 0.3)]
         self.L = 1
 
     def pd_torque(self, x, dx, x_d):
@@ -69,7 +67,7 @@ class ModelBasedPID(Controller):
         u_m = self.srb.M@a_r + self.srb.g(x)
         u_pid = self.srb.M@self.pd_torque(x, dx, x_d)
 
-        return self.force2control(u_pid + u_m)
+        return self.force2control(heavy_inputs_inv@(u_pid + u_m))
 
 
 # class SlidingMode(Controller):
@@ -119,7 +117,7 @@ class SlidingMode(Controller):
         self.srb = SRB(model)
         self.l = 1
         self.sigma = 1.5
-        self.eps = [0.05, 0.05, 0.05, 0.8, 0.8, 0.8]  # error bounds
+        self.eps = [0.8, 0.8, 0.8, 0.8, 0.8, 0.8]  # error bounds
         self.alpha = 93
 
     def control(self, x, dx, x_d, dx_d=None):
@@ -127,6 +125,7 @@ class SlidingMode(Controller):
         res_x = np.zeros(7)  # residual
         res_x[:3] = x[:3] - x_d[:3]
         res_x[3:] = quat_error(x[3:], x_d[3:])
+        
         r_tilde = self.srb.J(x).T@res_x  # in body frame
         v_tilde = dx
         if dx_d is not None:
@@ -151,7 +150,7 @@ class SlidingMode(Controller):
         a_s = rho@s_sign
         u_s = -self.srb.M@a_s
 
-        return self.force2control(u_n + u_s)
+        return self.force2control(heavy_inputs_inv@(u_n + u_s))
 
 
 class RobustQP(Controller):
@@ -160,6 +159,47 @@ class RobustQP(Controller):
 
         self.srb = SRB(model)
         self.l = 1
+        self.prob = self.build_problem()
+        self.a_s_prev = np.zeros(6)
+
+    def build_problem(self):
+        
+        # tuning
+        R_a = np.eye(6)
+        R_u = 0.01*np.eye(8)
+        gamma_1 = 0.1
+        # gamma_2 = 0.2
+
+        # approximated max bound
+        u_min = -5.4
+        u_max = 7
+        w = 37
+        K = np.diag([15.0]*6)
+
+        # state parameters
+        C_dx = cp.Parameter((6, ), name = 'C_dx')
+        D_dx = cp.Parameter((6, ), name = 'D_dx')
+        g = cp.Parameter((6, ), name = 'g')
+        s = cp.Parameter((6, ), name = 's')
+        a_n = cp.Parameter((6, ), name = 'a_n')
+        a_s_prev = cp.Parameter((6, ), name = 'a_s_prev')
+
+        # problem variables
+        a_s = cp.Variable((6, ), name = 'a_s')
+        u = cp.Variable((8, ), name = 'u')
+        d = cp.Variable(1, name = 'd')
+
+        objective = cp.Minimize(cp.sum_squares(R_a @ a_s) + cp.sum_squares(R_u @ u) + gamma_1*cp.power(d, 2))
+        
+        constraints = [s.T@K@a_s >= 100*cp.norm(s) + \
+                       cp.norm(s) * w + d,
+                       self.srb.M@(a_s + a_n) + \
+                       C_dx + D_dx + \
+                       g == heavy_mapping@u,
+                       u_min <= u,
+                       u_max >= u]
+        
+        return cp.Problem(objective, constraints)
 
     def control(self, x, dx, x_d, dx_d=None):
 
@@ -177,32 +217,17 @@ class RobustQP(Controller):
         # sliding part
         s = v_tilde + self.l*r_tilde
 
-        R_a = np.eye(6)
-        R_u = np.eye(8)
-        gamma_1 = 5
+        self.prob.param_dict['C_dx'].value = self.srb.C(dx)@dx
+        self.prob.param_dict['D_dx'].value = self.srb.D(dx)@dx
+        self.prob.param_dict['g'].value = self.srb.g(x)
 
-        u_min = -5.4
-        u_max = 7
-        w = 37
-        K = np.diag([0.36]*6)
+        self.prob.param_dict['s'].value = -s
+        self.prob.param_dict['a_n'].value = a_n
+        # self.prob.param_dict['a_s_prev'].value = self.a_s_prev
 
-        # Construct the problem.
-        a_s = cp.Variable(6)
-        u = cp.Variable(8)
-        d = cp.Variable(1)
+        self.prob.solve(warm_start=True)
 
-        objective = cp.Minimize(cp.quad_form(a_s, R_a) + cp.quad_form(u, R_u)
-                                + gamma_1*cp.power(d, 2))
-        
-        constraints = [-s.T@K@a_s >= -5*cp.norm(s, 1) - \
-                       cp.norm(s, 1) * w + d,
-                       self.srb.M@(a_s + a_n) +
-                       self.srb.C(dx)@dx + self.srb.D(dx)@dx +
-                       self.srb.g(x) == heavy_mapping@u,
-                       u_min <= u,
-                       u_max >= u]
-        
-        prob = cp.Problem(objective, constraints)
-        prob.solve()
+        u = self.prob.var_dict['u'].value
+        self.a_s_prev = self.prob.var_dict['a_s'].value
 
-        return self.force2control(u.value)
+        return self.force2control(u)

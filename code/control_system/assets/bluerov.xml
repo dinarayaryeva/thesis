@@ -12,7 +12,7 @@
     <default class="body">
 
       <default class="rotor">
-          <site type="sphere" rgba="1 0 0 1" size=".03 .03 .01"/>
+          <!-- <site type="sphere" rgba="1 0 0 1" size=".03 .03 .01"/> -->
       </default>
 
     </default>
@@ -32,7 +32,8 @@
 
     <!-- fullinertia -->
 
-    <geom type="plane" pos="0 0 -1" size="1 1 0.01" rgba="0 0 0.1 1"/>
+    <geom type="plane" pos="0 0 -0.1" size="1 1 0.01" rgba="0 0 0.1 1"/>
+    <geom name="goal_point" type="sphere" rgba="1 0 0 1" size=".03 .03 .01"/>
 
     <body name="body" pos="0 0 0" childclass="body">
 
@@ -51,7 +52,7 @@
 
       <geom type="mesh" mesh="body_mesh" quat="0.7071068 0 0 0.7071068"/>
 
-      <geom name='box' type='box' size="0.228 0.218 0.126" rgba="1 0 0 0.1"/>
+      <!-- <geom name='box' type='box' size="0.228 0.218 0.126" rgba="1 0 0 0.1"/> -->
 
       <site name="rotor1" class="rotor" pos="0.12 -0.113875 0."/>
       <site name="rotor2" class="rotor" pos="0.12 0.113875 0."/>

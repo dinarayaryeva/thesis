@@ -2,55 +2,23 @@
 \label{chap:intro}
 
 \section{Background}
-Robotic systems, particularly underwater vehicles such as Remotely Operated Vehicles 
-(ROVs), have garnered significant attention in recent years due to their wide-ranging 
-applications in industrial, scientific, and military domains. ROVs are employed for 
-diverse purposes, including underwater exploration, pipeline inspection, and 
-environmental monitoring. However, controlling these vehicles is challenging due to 
-the highly nonlinear and unpredictable nature of the underwater environment. 
-Therefore, effective control strategies are essential to ensure the stability and 
-performance of ROVs in such conditions.
+    Underwater robotic systems, such as Remotely Operated Vehicles (ROVs), have gained significant attention for their diverse applications in industry, science, and the military. ROVs are employed for diverse purposes, including underwater exploration, pipeline inspection, and environmental monitoring. However, controlling these vehicles is challenging due to the highly nonlinear and unpredictable nature of the underwater environment. Therefore, effective control strategies are essential to ensure the stability and performance of ROVs in such conditions.
 
-Control strategies for ROVs have evolved, with robust 
-control methods like Sliding Mode Control (SMC) gaining prominence due to their 
-effectiveness in handling system nonlinearities and uncertainties.
-Despite these advancements, existing control methods for ROVs face several 
-challenges. Traditional SMC techniques, while robust, often lead to a phenomenon 
-known as "chattering," which can cause wear and tear on mechanical components and 
-reduce the overall efficiency of the control system. Additionally, many control 
-algorithms struggle to adapt to real-time changes in the underwater environment, 
-such as varying current strengths and unforeseen obstacles. These limitations 
-underscore the need for improved control strategies that can offer both robustness 
-and adaptability.
+    Control strategies for ROVs have evolved, with robust control methods like Sliding Mode Control (SMC) gaining prominence due to their effectiveness in handling system nonlinearities and uncertainties. Despite these advancements, existing control methods for ROVs face several challenges. Traditional SMC techniques, while robust, often lead to a phenomenon known as "chattering," which can cause wear and tear on mechanical components and reduce the overall efficiency of the control system. Additionally, many control algorithms struggle to adapt to real-time changes in the underwater environment, such as varying current strengths and unforeseen obstacles. These limitations underscore the need for improved control strategies that can offer both robustness and adaptability.
 
 \section{Research Objective}
 
-The primary objective of this study is to enhance the control of remotely 
-operated vehicles (ROVs) by developing an improved Sliding Mode Control 
-(SMC) scheme that leverages convex optimization techniques. This thesis aims to 
-address the existing issues of chattering and adaptability by dynamically 
-adjusting control parameters through convex optimization.
+    The primary objective of this study is to enhance the control of remotely operated vehicles (ROVs) by developing an improved Sliding Mode Control (SMC) scheme that leverages convex optimization techniques. This thesis aims to address the existing issues of chattering and adaptability by dynamically adjusting control parameters through convex optimization.
 
-\textbf{The research question}: 
-How can sliding mode control for robotic systems be improved using convex 
-optimization to enhance stability and performance while mitigating 
-the chattering effect?
+    \textbf{The research question}: 
+    How can sliding mode control for robotic systems be improved using convex optimization to enhance stability and performance while mitigating the chattering effect?
 
-The research objectives are as follows:
-\begin{enumerate}
-    \item Develop a comprehensive mathematical model for ROVs that captures the essential dynamics and uncertainties
-    \item Design a sliding mode control scheme enhanced by convex optimization
-    \item Evaluate the performance of the proposed control scheme through simulation
-\end{enumerate}
+    The research objectives are as follows:
+    \begin{enumerate}
+        \item Develop a comprehensive mathematical model for ROVs that captures the essential dynamics and uncertainties;
+        \item Design a sliding mode control scheme enhanced by convex optimization;
+        \item Evaluate the performance of the proposed control scheme through simulation;
+    \end{enumerate}
 
 \section{Structure of the Thesis}
-    The remainder of the work is structured as follows:
-    Chapter 2 provides an overview of existing research on ROVs, 
-    focusing on their modeling and control strategies.
-    In Chapter 3, the development of the 
-    mathematical model for the ROV is explored.
-    Further, Chapter 4 describes the design of the 
-    enhanced sliding mode control scheme.
-    Chapter 5 presents the results of the simulation and experimental 
-    validation, and discusses the findings.
-    Finally, Chapter 6 summarizes the research contributions and suggests directions for future work.
+    The thesis is organized into several chapters to systematically address the research objectives and methodologies. Chapter 1 provides an introduction, outlining the background, research objective, and the structure of the thesis. Chapter 2 reviews the existing literature on remotely operated vehicles (ROVs), focusing on modeling and control design. Chapter 3 delves into the mathematical modeling of ROVs, covering the notations, frames of reference, kinematics, dynamics, and thruster modeling. Chapter 4 discusses the methodology, including design considerations, control objectives, model uncertainties, and the approximated system dynamics. Chapter 5 presents the implementation of the proposed control scheme and its validation through simulations and experiments. Finally, Chapter 6 concludes the thesis with a summary of findings, contributions, and suggestions for future research.

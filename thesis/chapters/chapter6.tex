@@ -1,4 +1,69 @@
-\chapter{Conclusion}
-\label{chap:conclusion}
+\chapter{Evaluation and Discussion}
+\label{chap:eval}
 
+    In this chapter, the performance assessment of the proposed control strategies for the BlueROV Heavy is presented. This includes the examination of position tracking, the impact of disturbances, and the comparison of different control methods in terms of accuracy and energy consumption.
+
+    In order to evaluate the control strategy discussed in Chapter 4, a point-to-point control routine was applied to the controller under small disturbances and uncertainties related to the system parameters. Experiments were conducted to test the control method, and the following are the results of these experiments.
+
+\section{Position Tracking}
+
+    Position tracking is a critical metric for evaluating the effectiveness of control systems. The ability to follow a predefined trajectory with minimal deviation ensures that the ROV can perform precise maneuvers necessary for underwater tasks such as inspection and data collection.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics*[width=0.99\textwidth]{id_pos2}
+        \includegraphics*[width=0.99\textwidth]{sm_pos2}
+        \includegraphics*[width=0.99\textwidth]{qp_pos2}
+        \caption{Position tracking performance of the BlueROV Heavy. From top to bottom: Inverse Dynamics (a), Sliding Mode (b), and Optimized Sliding Mode (c).}
+        \label{image:pos_tracking}
+    \end{figure}
+
+    \pic{image:pos_tracking}a, the Inverse Dynamics (ID) control system is shown tracking a desired path. The ROV follows the trajectory but exhibits significant error in the $z$ direction and some stabilization oscillations. In \pic{image:pos_tracking}b, the Sliding Mode (SM) control system is illustrated, which provides robust position tracking and handles nonlinearities and uncertainties better than the ID control system. Lastly, \pic{image:pos_tracking}c depicts the Optimized Sliding Mode (QP) control system, which enhances tracking performance by optimizing control inputs for greater accuracy and efficiency.
+
+\section{Effect from Disturbances}
+
+    In real-world underwater environments, disturbances such as water currents and external forces are unavoidable. It is essential to assess the control system's ability to handle these disturbances.
+    
+    \pic{image:disturbances} illustrates how control systems perform when exposed to disturbances ($e_{dist}$) compared to perfect conditions ($e$). The ID control system maintains stability but exhibits larger deviations under significant disturbances. The SM control system demonstrates enhanced robustness, reducing the impact of disturbances. The QP control system delivers the best performance, effectively mitigating the effects of disturbances and maintaining trajectory accuracy.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics*[width=0.45\textwidth]{id_error2}
+        \includegraphics*[width=0.45\textwidth]{sm_error2}
+        \includegraphics*[width=0.45\textwidth]{qp_error2}
+        \caption{Performance of the control systems with disturbances ($e_{dist}$): Inverse Dynamics (a), Sliding Mode (b), and Optimized Sliding Mode (c).}
+        \label{image:disturbances}
+    \end{figure}
+
+\section{Comparison between Control Methods}
+
+    A comprehensive comparison of control methods is essential to understand their relative strengths and weaknesses, especially in terms of accuracy and energy consumption.
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics*[width=0.6\textwidth]{e_norm}
+            \includegraphics*[width=0.6\textwidth]{u_norm}
+        \end{center}
+        \caption{Tracking error and energy efficiency metrics of the control systems: Inverse Dynamics (id), Sliding Mode (sm), and Optimized Sliding Mode (qp)}
+        \label{image:}
+    \end{figure}
+    The accuracy:
+    \begin{itemize}
+        \item \textbf{Inverse Dynamics (ID):} Offers good accuracy under ideal conditions but is more susceptible to disturbances and modeling inaccuracies.
+        \item \textbf{Sliding Mode (SM):} Provides better accuracy in the presence of uncertainties and disturbances due to its robust nature.
+        \item \textbf{Optimized Sliding Mode (QP):} Delivers the highest accuracy by optimizing control inputs and effectively handling disturbances and nonlinearities.
+    \end{itemize}
+    The energy consumption:
+    \begin{itemize}
+        \item \textbf{Inverse Dynamics (ID):} Tends to consume more energy due to its reliance on precise model parameters and less efficient handling of disturbances.
+        \item \textbf{Sliding Mode (SM):} Improves energy efficiency by adapting to changing conditions.
+        \item \textbf{Optimized Sliding Mode (QP):} Optimizes thruster usage to achieve the best energy efficiency while maintaining high accuracy and robustness.
+    \end{itemize}
+
+\section{Summary}
+
+    After evaluating the proposed control schemes for the BlueROV Heavy in terms of position tracking, the effect of disturbances, and comparison of control methods, it is evident that the Optimized Sliding Mode (QP) control system offers the best overall performance. It effectively balances accuracy, robustness, and energy efficiency.
+
+
+
+    
 

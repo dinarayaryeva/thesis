@@ -7,8 +7,8 @@ from time import perf_counter
 sim = BluerovSim("../assets/bluerov.xml",         # Path to the MuJoCo XML configuration file.
                 update_freq=500,  # Update frequency for the control and state (Hz).
                 freq=2000,        # Simulation step frequency (Hz).
-                buoyancy = 1.01,
-                stream = [1.0, 0, 0],
+                buoyancy = 1.00,
+                # stream = [1.0, 0, 0],
                 render=True,    # Enable graphical rendering of the simulation.
                 start=True)       # Start the simulation upon instantiation.
 

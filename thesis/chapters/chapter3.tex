@@ -28,8 +28,8 @@
     (roll, pitch, and yaw), as shown in \pic{image:6dof}.
 
     \begin{figure}[H]
-        \centering\includegraphics*[width=0.4\textwidth]{6dof}
-        \caption{Illustration of the Six Degrees of Freedom (DOF) for a Marine Vehicle}
+        \centering\includegraphics*[width=0.5\textwidth]{frames}
+        \caption{Illustration of the Six Degrees of Freedom (DOF) for a Marine Vehicle. Adopted from \cite{6dof}}
         \label{image:6dof}
     \end{figure}
 
@@ -113,24 +113,9 @@
 
 \section{Frames of reference}
 
-    In order to determine the kinematics and dynamics of the system, it is essential 
-    to project the calculations into a consistent frame of reference. 
-    In some cases, multiple coordinate frames are established based on the system's configuration.
-    
-    For ROV, it is reasonable to define two coordinate frames. 
-    These frames are the earth-fixed frame, which is inertial with fixed origin, and the body-fixed frame, 
-    which is a moving frame attached to the vehicle as depicted in \pic{image:frames}. 
-    \begin{figure}[H]
-        \centering\includegraphics*[width=0.5\textwidth]{frames}
-        \caption{Coordinate Frames Used in the Kinematic and Dynamic Modeling of ROVs}
-        \label{image:frames}
-    \end{figure}
+    To accurately determine the movement and forces of the system, it's important to perform calculations within a consistent frame of reference. In the case of an ROV, two coordinate frames are utilized: the earth-fixed frame, which is stationary, and the body-fixed frame, which moves with the vehicle. The body-fixed frame aligns with the vehicle's center of mass and its axes correspond to the vehicle's principal axes of inertia.
 
-    The origin of the body-fixed frame usually coincides with the vehicle's center of mass,
-     and its axes are chosen along the vehicle's principle axes of inertia.
-
-    The state variables of the rigid body expressed in the body-fixed frame would be 
-    denoted by $^B$ and in the earth-fixed frame by $^N$.
+    The state variables of the rigid body expressed in the body-fixed frame would be denoted by $^B$ and in the earth-fixed frame by $^N$.
 
 \section{Kinematics}
 
@@ -197,8 +182,8 @@
     the center of mass (COM), but placed higher.
     This shift between centers causes torque acting against the capsizing (Fig. \ref{image:scheme}).
     \begin{figure}[H]
-        \centering\includegraphics*[width=0.5\textwidth]{01_srb}
-        \caption{Schematic representation of the marine vehicle showing the center of buoyancy (COB) and the center of mass (COM).}
+        \centering\includegraphics*[width=0.5\textwidth]{cob}
+        \caption{Schematic representation of the marine vehicle showing the center of buoyancy (COB) and the center of mass (COM). Adopted from \cite{cob}}
         \label{image:scheme}
     \end{figure}
 
@@ -294,10 +279,8 @@
         \label{eq::matrix_dynamics}
     \end{equation}
     \begin{conditions}
-        \text{\quad} M & $M_B+M_A=$ the total mass matrix \\
-        C(\bar{v}^B) &$C_B(\bar{v}^B)+C_A(\bar{v}^B)=$ the Coriolis and centripetal forces matrix \\
-        D(\bar{v}^B) & the hydrodynamic damping \\
-        g(\bar{r}^N) & the restoring forces and moments
+        \text{\quad} M & $=M_B+M_A$\\
+        C(\bar{v}^B) & $=C_B(\bar{v}^B)+C_A(\bar{v}^B)$\\
     \end{conditions}
 
 \section{Thrusters modelling}
@@ -305,11 +288,11 @@
     The force and moment vector produced by the thruster are typically represented 
     by a complex nonlinear function $f(\bar{v}^B, V, u)$, which depends on the 
     vehicle's velocity vector $\bar{v}^B$, the power source voltage $V$, and the 
-    control variable $u$. 
-    % #TODO add sources
+    control variable $u$.
 
     However, expressing such a nonlinear relationship directly can be challenging 
-    in practical applications. As a result, some authors propose a simpler approach:
+    in practical applications. 
+    As a result, some authors propose a simpler approach \cite{actuators}:
     \begin{equation}
         \bar{f}^B=T\phi(u)
         \label{eq::thrust_model}
