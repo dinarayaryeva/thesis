@@ -329,6 +329,14 @@
   height: 90%;
   }
   </style>
+  <style>
+  .g-center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  }
+  </style>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -461,16 +469,8 @@ Use quaternions for orientation.</p></li>
 <section id="optimization-based-control" class="slide level2">
 <h2><strong>Optimization-based Control</strong></h2>
 <div class="columns">
-<div class="column" style="width:60%;">
-<p>Basic optimization problem: <span class="math display">\[
-\begin{aligned}
-    \min_{a_s, \nu} \quad &amp; a_s^T R_a a_s  + \nu^T R_{\nu} \nu \\
-    \textrm{s.t.} \quad &amp; s^TKa_s \geq \eta \|s\| + \|s\|\|w\| \\\
-    &amp; \hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v))
-\end{aligned}
-\]</span> Enhanced optimization problem:</p>
-<div style="overflow-x:hidden;overflow-y:hidden;">
-<p><span class="math display">\[
+<div class="column" style="width:70%;">
+<p>Enhanced optimization problem: <span class="math display">\[
 \begin{aligned}
     \min_{a_s, \nu, d} \quad &amp; a_s^T R_a a_s  + \nu^T R_{\nu} \nu +
     \color{lime}{\gamma_0 d^2} + \color{blue}{\gamma_1 \|a_s - a_{s (prev)}\|} \\
@@ -479,15 +479,8 @@ Use quaternions for orientation.</p></li>
     &amp; \color{red}{\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})}
 \end{aligned}
 \]</span></p>
-</div>
-</div><div class="column" style="width:40%;">
+</div><div class="column" style="width:30%;">
 <p>Properties:</p>
-<ol type="1">
-<li>SMC optimization</li>
-</ol>
-<p><br>
-<br>
-Properties:</p>
 <ol type="1">
 <li>SMC optimization</li>
 <li><span style="color:red">Control input constraints</span></li>
