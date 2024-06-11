@@ -321,6 +321,14 @@
       margin-right: 0; 
     }
   </style>
+  <style>
+  .v-center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+  }
+  </style>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -453,7 +461,7 @@ Use quaternions for orientation.</p></li>
 <section id="optimization-based-control" class="slide level2">
 <h2><strong>Optimization-based Control</strong></h2>
 <div class="columns">
-<div class="column" style="width:40%;">
+<div class="column" style="width:30%;">
 <p>Basic optimization problem: <span class="math display">\[
 \begin{aligned}
     \min_{a_s, \nu} \quad &amp; a_s^T R_a a_s  + \nu^T R_{\nu} \nu \\
@@ -469,7 +477,7 @@ Use quaternions for orientation.</p></li>
     &amp; \color{red}{\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})}
 \end{aligned}
 \]</span></p>
-</div><div class="column" style="width:20%;">
+</div><div class="column" style="width:30%;">
 
 </div><div class="column" style="width:40%;">
 <p>Properties:</p>
@@ -584,11 +592,15 @@ Properties:</p>
 </section>
 <section id="demo-video-no-control" class="slide level2">
 <h2><strong>Demo video (no control)</strong></h2>
-<video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/no_control.mp4"></video>
+<div class="v-center-container">
+<video id="video_shortcode_videojs_video1" width="960%" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/no_control.mp4"></video>
+</div>
 </section>
 <section id="demo-video-qp-control" class="slide level2">
 <h2><strong>Demo video (QP control)</strong></h2>
-<video id="video_shortcode_videojs_video2" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/qp_control.mp4"></video>
+<div class="v-center-container">
+<video id="video_shortcode_videojs_video2" width="960%" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/qp_control.mp4"></video>
+</div>
 </section>
 <section id="summary-of-findings" class="slide level2">
 <h2><strong>Summary of Findings</strong>:</h2>
