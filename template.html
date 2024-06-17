@@ -7,9 +7,7 @@
 <link href="template_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="template_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="template_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="template_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="template_files/libs/quarto-contrib/videojs/video.min.js"></script>
-<link href="template_files/libs/quarto-contrib/videojs/video-js.css" rel="stylesheet"><meta charset="utf-8">
+<link href="template_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.43">
 
   <title>Enhanced Convex Optimization Driven Sliding Mode Control over Robotic Systems</title>
@@ -30,8 +28,29 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="template_files/libs/revealjs/dist/theme/quarto.css">
+  <link rel="stylesheet" href="styles.css">
   <link href="template_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="template_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="template_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -344,18 +363,39 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Enhanced Convex Optimization Driven Sliding Mode Control over Robotic Systems</h1>
-  <p class="subtitle">Dinara Yaryeva</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-<div class="line-block">Thesis supervisor: Simeon Nedelchev<br>
-Innopolis University</div> 
+<div class="line-block">Student:<br>
+Dinara Yaryeva</div> 
 </div>
+<div class="quarto-title-author-email">
+<a href="mailto:d.yaryeva@innopolis.university">d.yaryeva@innopolis.university</a>
 </div>
+        <p class="quarto-title-affiliation">
+            <a href="https://innopolis.university/en/">
+            Innopolis University
+            </a>
+          </p>
+    </div>
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+<div class="line-block">Thesis supervisor:<br>
+Simeon Nedelchev</div> 
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:s.nedelchev@innopolis.university">s.nedelchev@innopolis.university</a>
+</div>
+        <p class="quarto-title-affiliation">
+            <a href="https://innopolis.university/en/">
+            Innopolis University
+            </a>
+          </p>
+    </div>
 </div>
 
-  <p class="date">Feb 6, 2025</p>
+  <p class="date">Jun 21, 2024</p>
 </section>
 <section id="background" class="slide level2">
 <h2><strong>Background</strong></h2>
@@ -386,64 +426,74 @@ Underwater vehicles exhibit highly nonlinear dynamics, with coupled motions and 
 <li><p><strong>Disturbance Rejection</strong><br>
 Underwater vehicles must contend with external disturbances such as ocean currents, waves, and unexpected obstacles.</p></li>
 </ol>
-<!-- ## Rationale for Underwater Vehicle Control -->
-<!-- ## Literature review -->
 </section>
 <section id="rationale-for-underwater-vehicle-control" class="slide level2">
 <h2><strong>Rationale for Underwater Vehicle Control</strong></h2>
-<p>The control of ROVs is challenging due to the nonlinear and unpredictable nature of underwater environments.</p>
 <p>Sliding Mode Control (SMC) offers robustness against such uncertainties but is often hindered by chattering, which can cause wear and tear on mechanical components and reduce control accuracy.</p>
 <p>Enhancing SMC with convex optimization aims to address these limitations, providing a more stable and precise control mechanism for ROVs.</p>
+<p><strong>Research Objectives</strong>:</p>
+<ol type="1">
+<li><p>Develop a comprehensive <span style="color:green;">mathematical model</span> for ROVs.</p></li>
+<li><p>Design a <span style="color:green;">SMC scheme</span> enhanced by <span style="color:green;">convex optimization</span>.</p></li>
+<li><p><span style="color:green;">Evaluate</span> the performance through <span style="color:green;">simulation</span>.</p></li>
+</ol>
 </section>
-<section id="research-objectives" class="slide level2">
-<h2><strong>Research Objectives</strong>:</h2>
-<h3 id="develop-a-comprehensive-mathematical-model-for-rovs.">1. Develop a comprehensive mathematical model for ROVs.</h3>
-<h3 id="design-an-smc-scheme-enhanced-by-convex-optimization.">2. Design an SMC scheme enhanced by convex optimization.</h3>
-<h3 id="evaluate-the-performance-through-simulation.">3. Evaluate the performance through simulation.</h3>
-</section>
-<section id="mathematical-modelling" class="slide level2">
-<h2><strong>Mathematical Modelling</strong></h2>
+<section id="mathematical-modelling-fossenguidance" class="slide level2">
+<h2><strong>Mathematical Modelling</strong> <span class="citation" data-cites="fossen:guidance"><a href="#/references" role="doc-biblioref" onclick="">[1]</a></span></h2>
 <div class="columns">
 <div class="column">
 <ul>
 <li><p>Single rigid body with 6 DOF.<br>
-Use quaternions for orientation.</p></li>
+Use quaternions for orientation. <span class="citation" data-cites="quat_smc"><a href="#/references" role="doc-biblioref" onclick="">[2]</a></span></p></li>
 <li><p>Kinematics and Dynamics: <span class="math display">\[\dot{\bar{r}}^N=J(\bar{r}^N) \bar{v}^B\]</span> <span class="math display">\[M \dot{\bar{v}}^B + C(\bar{v}^B) \bar{v}^B+D(\bar{v}^B) \bar{v}^B+g(\bar{r}^N)= \bar{f}^B\]</span></p></li>
-<li><p>Thrusters Modelling: <span class="math display">\[\bar{f}^B=T\phi(u)\]</span></p></li>
+<li><p>Inherent challenges of ROVs: <span class="citation" data-cites="overview"><a href="#/references" role="doc-biblioref" onclick="">[3]</a></span></p>
+<ul>
+<li>buoyancy force</li>
+<li>added mass effect</li>
+<li>hydrodynamic damping</li>
+</ul></li>
 </ul>
 </div><div class="column">
 <div class="quarto-figure quarto-figure-right">
 <figure>
-<p><img data-src="images/figures/figs/frames.jpg" class="quarto-figure quarto-figure-right" style="width:80.0%"></p>
+<p><img data-src="images/figures/figs/frames.jpg" style="width:80.0%"></p>
+<figcaption>Fig 1. Illustration of 6DOF for a Marine Vehicle.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<ul>
-<li>Inherent challenges of ROVs: buoyancy, added mass and hydrodynamic damping.</li>
-</ul>
 </section>
-<section id="inverse-dynamics" class="slide level2">
-<h2><strong>Inverse Dynamics</strong></h2>
+<section id="thrusters-modelling" class="slide level2">
+<h2><strong>Thrusters Modelling</strong>:</h2>
 <div class="columns">
 <div class="column">
+<p>Nonlinear thruster mapping: <span class="math display">\[\bar{f}^B=T\phi(u)\]</span> Estimated by 3d order polynomial <span class="math inline">\(\phi_0\)</span>: <span class="math display">\[
+\phi(u) = k\phi_0(u)
+\]</span> k - scaling coefficient, depends on voltage</p>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/figures/apprx.png"></p>
+<figcaption>Fig 2. Approximation Model for ROV Thruster Mapping based on experimental data.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="inverse-dynamics-spong" class="slide level2">
+<h2><strong>Inverse Dynamics</strong> <span class="citation" data-cites="spong"><a href="#/references" role="doc-biblioref" onclick="">[4]</a></span></h2>
+<div class="column" style="width:50%;">
 <ul>
-<li>Approximated system dynamics and thruster mapping: <span class="math display">\[
-\begin{aligned}
-&amp;M \dot{v} + h(r, v) + \delta = B\nu \\
-&amp;\bar{f}^B = T(k\phi_0(u)) = B\phi_0(u) = B\nu
-\end{aligned}
+<li>Approximated system dynamics: <span class="math display">\[
+M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 \]</span></li>
 <li>Control law: <span class="math display">\[\nu = \hat{B}^{+}(\hat{M}a + \hat{h}(r, v))\]</span></li>
 <li>Outer loop control: <span class="math display">\[a = \dot{v}_{des} - K_p \tilde{r} - K_d \tilde{v}\]</span></li>
 </ul>
-</div><div class="column">
-<p><img data-src="images/figures/apprx.png"></p>
-</div>
 </div>
 </section>
-<section id="sliding-mode" class="slide level2">
-<h2><strong>Sliding Mode</strong></h2>
+<section id="sliding-mode-slotine_applied" class="slide level2">
+<h2><strong>Sliding Mode</strong> <span class="citation" data-cites="slotine_applied"><a href="#/references" role="doc-biblioref" onclick="">[5]</a></span></h2>
 <div class="columns">
 <div class="column">
 <ul>
@@ -462,19 +512,24 @@ Use quaternions for orientation.</p></li>
 \]</span></li>
 </ul>
 </div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
 <p><img data-src="images/figures/boundary.png"></p>
+<figcaption>Fig 3. SMC Scheme with a Boundary Layer to Reduce Chattering.</figcaption>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="optimization-based-control" class="slide level2">
-<h2><strong>Optimization-based Control</strong></h2>
+<section id="optimization-based-control-utkin_book" class="slide level2">
+<h2><strong>Optimization-based Control</strong> <span class="citation" data-cites="utkin_book"><a href="#/references" role="doc-biblioref" onclick="">[6]</a></span></h2>
 <div class="columns">
 <div class="column" style="width:70%;">
 <p>Enhanced optimization problem: <span class="math display">\[
 \begin{aligned}
     \min_{a_s, \nu, d} \quad &amp; a_s^T R_a a_s  + \nu^T R_{\nu} \nu +
-    \color{lime}{\gamma_0 d^2} + \color{blue}{\gamma_1 \|a_s - a_{s (prev)}\|} \\
-    \textrm{s.t.} \quad &amp; s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + \color{lime}d \\\
+    \color{green}{\gamma_0 d^2} + \color{blue}{\gamma_1 \|a_s - a_{s (prev)}\|} \\
+    \textrm{s.t.} \quad &amp; s^TKa_s \geq \eta \|s\| + \|s\|\|w\| + \color{green}d \\\
     &amp; \hat Ma_s - \hat B\nu = -(\hat{M}a_n + h(r, v)) \\
     &amp; \color{red}{\phi_0(u_{min}) \leq \nu \leq \phi_0(u_{max})}
 \end{aligned}
@@ -484,7 +539,7 @@ Use quaternions for orientation.</p></li>
 <ol type="1">
 <li>SMC optimization</li>
 <li><span style="color:red">Control input constraints</span></li>
-<li><span style="color:lime">Relaxed sliding condition</span></li>
+<li><span style="color:green">Relaxed sliding condition</span></li>
 <li><span style="color:blue">Smoothing</span></li>
 </ol>
 </div>
@@ -495,7 +550,7 @@ Use quaternions for orientation.</p></li>
 <div class="columns">
 <div class="column">
 <ul>
-<li>BlueROV Heavy:<br>
+<li><span style="color:green;">BlueROV Heavy:</span><br>
 6DOF ROV with 8 thrusters</li>
 </ul>
 <div>
@@ -513,14 +568,40 @@ Use quaternions for orientation.</p></li>
 </div>
 </div><div class="column">
 <ul>
-<li>MuJoCo Simulator by Google DeepMind</li>
-<li>Python codebase</li>
+<li>Simulator based on <span style="color:green;">MuJoCo</span> physics engine</li>
+<li><span style="color:green;">Python</span> codebase using standard scientific packages</li>
+<li><span style="color:green;">Separate</span> control, modelling and simulation <span style="color:green;">modules</span> (<span style="color:green;">multiprocessing</span>)</li>
 </ul>
-<div class="quarto-figure quarto-figure-top">
+<div style="text-align:center;">
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/figures/scheme.png" class="quarto-figure quarto-figure-top" style="width:70.0%"></p>
+<p><img data-src="images/figures/frame.png" style="width:30.0%"></p>
+<figcaption>Github repo with implementation</figcaption>
 </figure>
 </div>
+</div>
+</div>
+</div>
+</section>
+<section id="test-enviroment" class="slide level2">
+<h2><strong>Test enviroment</strong></h2>
+<div class="columns">
+<div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/figures/no_control.gif"></p>
+<figcaption>Fig 4. BlueROV simulation without control input.</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<p>Properties:</p>
+<ul>
+<li>water density and viscosity to simulate fluid env</li>
+<li>uncertainties of the model about 10%</li>
+<li>0.3 - 0.7 m/s const stream acting in xyz directions</li>
+</ul>
+<p>Task: point-to-point control</p>
+<p>Control input is clipped from -1 to 1</p>
 </div>
 </div>
 </section>
@@ -539,83 +620,64 @@ Use quaternions for orientation.</p></li>
 
 <img data-src="images/figures/qp_pos.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Optimized Sliding Mode (QP) optimizes control inputs for greater accuracy and eﬃciency.</p>
 </section>
-<section id="effect-from-disturbances-id" class="slide level2">
-<h2><strong>Effect from Disturbances (ID)</strong></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/figures/id_error2.jpg" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
-</figure>
+<section id="effect-from-disturbances" class="slide level2">
+<h2><strong>Effect from Disturbances</strong></h2>
+<div>
+
 </div>
-<p>The ID control system maintains stability but exhibits larger deviations under signiﬁcant disturbances.</p>
-</section>
-<section id="effect-from-disturbances-smc" class="slide level2">
-<h2><strong>Effect from Disturbances (SMC)</strong></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/figures/sm_error2.jpg" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
-</figure>
+<div class="quarto-layout-panel" data-layout="[[1,1,1]]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img data-src="images/figures/id_error2.jpg"></p>
 </div>
-<p>The SM control system demonstrates enhanced robustness.</p>
-</section>
-<section id="effect-from-disturbances-qp" class="slide level2">
-<h2><strong>Effect from Disturbances (QP)</strong></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/figures/qp_error2.jpg" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
-</figure>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img data-src="images/figures/sm_error2.jpg"></p>
 </div>
-<p>The QP control system eﬀectively mitigates the eﬀects of disturbances.</p>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img data-src="images/figures/qp_error2.jpg"></p>
+</div>
+</div>
+</div>
+<ol type="a">
+<li><p>The ID control system maintains stability but exhibits larger deviations under signiﬁcant disturbances.</p></li>
+<li><p>The SM control system demonstrates enhanced robustness.</p></li>
+<li><p>The QP control system eﬀectively mitigates the eﬀects of disturbances.</p></li>
+</ol>
 </section>
 <section id="comparison-on-tracking-error" class="slide level2">
 <h2><strong>Comparison on Tracking Error</strong></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/figures/e_norm.jpg" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
-</figure>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout="[[1,1]]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img data-src="images/figures/e_norm.jpg"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img data-src="images/figures/u_norm.jpg"></p>
+</div>
+</div>
 </div>
 <p>Optimized Sliding Mode (QP) delivers the highest accuracy by optimizing control inputs and eﬀectively handling disturbances and nonlinearities.</p>
 </section>
-<section id="comparison-on-energy-consumption" class="slide level2">
-<h2><strong>Comparison on Energy Consumption</strong></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/figures/u_norm.jpg" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
-</figure>
-</div>
-<p>Optimized Sliding Mode (QP) optimizes thruster usage to achieve the best energy efficiency while maintaining high accuracy and robustness.</p>
-</section>
-<section id="demo-video-no-control" class="slide level2">
-<h2><strong>Demo video (no control)</strong></h2>
-<div class="v-center-container">
-<video id="video_shortcode_videojs_video1" width="960%" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/no_control.mp4"></video>
-</div>
-</section>
 <section id="demo-video-qp-control" class="slide level2">
 <h2><strong>Demo video (QP control)</strong></h2>
-<div class="v-center-container">
-<video id="video_shortcode_videojs_video2" width="960%" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="images/figures/qp_control.mp4"></video>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/figures/qp_control.gif" class="quarto-figure quarto-figure-center"></p>
+</figure>
 </div>
 </section>
-<section id="summary-of-findings" class="slide level2">
-<h2><strong>Summary of Findings</strong>:</h2>
+<section id="conclusion" class="slide level2">
+<h2>Conclusion</h2>
+<h3 id="summary-of-findings"><strong>Summary of Findings</strong>:</h3>
 <ul>
 <li>The optimized Sliding Mode Control (SMC) significantly improved ROV stability and performance.</li>
 <li>Superior tracking accuracy and robustness compared to traditional methods.</li>
-<li>Increased robustness to disturbances and model uncertainties.</li>
 </ul>
-</section>
-<section id="contributions" class="slide level2">
-<h2><strong>Contributions</strong>:</h2>
+<h3 id="future-research-directions"><strong>Future Research Directions</strong>:</h3>
 <ul>
-<li>Developed a comprehensive mathematical model for ROVs and designed an optimized SMC scheme.</li>
-<li>Implemented and validated the control schemes on a BlueROV Heavy platform through extensive simulations.</li>
-<li>Addressed challenges like nonlinearity and actuator wear.</li>
-</ul>
-</section>
-<section id="future-research-directions" class="slide level2">
-<h2><strong>Future Research Directions</strong>:</h2>
-<ul>
-<li>Optimization: Further explore optimization and adaptive control methods.</li>
 <li>Real-World Testing: Conduct real-world experiments and seek industry collaboration.</li>
 <li>Hybrid Controls: Investigate integrating SMC with other advanced control methods.</li>
 </ul>
@@ -627,20 +689,71 @@ Use quaternions for orientation.</p></li>
 <h2><strong>Appendix (chattering on pure SMC)</strong></h2>
 
 <img data-src="images/figures/chattering.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Although the SMC does a better job of position stabilisation, the torques on the thrusters oscillate at a very high frequency.</p>
-<!-- 
-Questions and Discussion
-
-Invite the audience to ask questions and engage in a discussion about the research.
-
-##  Acknowledgments
-Acknowledgments
-
-Thank you to my supervisor, Simeon Nedelchev, collaborators, and any funding bodies who supported this research.
-
-## References
-Key References
-
-List of primary sources and literature cited in the thesis. (Include detailed references in small text for visibility) -->
+</section>
+<section id="appendix-smc-theory.-part-1" class="slide level2">
+<h2><strong>Appendix (SMC theory. Part 1)</strong></h2>
+<div style="font-size: 60%;">
+<p>Substitution to the dynamics yields the equation: <span class="math display">\[\begin{equation}
+    \begin{aligned}
+    \dot{v} &amp;= \underbrace{M^{-1}(\frac{k}{\hat{k}}\hat{h}(r, v) - h(r, v)
+        - \delta)}_{F(r, v)} + \underbrace{\frac{k}{\hat{k}}M^{-1}\hat{M}}_{K}a = \\
+    &amp;= F(r, v) + Ka
+    \end{aligned}
+\end{equation}\]</span> where the terms <span class="math inline">\(F(r,v)\)</span> and <span class="math inline">\(K\)</span> represent dynamical and inertial uncertainties.</p>
+<p>The time derivative of <span class="math inline">\(\mathbf{s}\)</span> is connected to dynamics as follows: <span class="math display">\[\begin{equation}
+\dot{s} = \dot{\tilde{v}} + \lambda \tilde{v} =
+a_n - \dot{v} = a_n - F - K(a_n + a_s) = w - Ka_s
+\end{equation}\]</span> with error function <span class="math display">\[w(r, v) = (I - K)a_n - F(r, v)\]</span></p>
+<p>Substitution to sliding condition yields: <span class="math display">\[\begin{equation}
+s^Tw- s^TKa_s  \leq \|s\|\|w\| - s^TKa_s  \leq - \eta \|s\|
+\label{eqn::sliding_condition}
+\end{equation}\]</span></p>
+</div>
+</section>
+<section id="appendix-smc-theory.-part-2" class="slide level2">
+<h2><strong>Appendix (SMC theory. Part 2)</strong></h2>
+<div style="font-size: 60%;">
+<p>Let us recall that for any symmetric matrix P: <span class="math display">\[\begin{equation}
+    \label{eqn:property}
+    \sigma^2_{min} \|x\|^2 \leq \|x^TPx\| \leq \sigma^2_{max} \|x\|^2
+\end{equation}\]</span> with <span class="math inline">\(\sigma_{min}\)</span> and <span class="math inline">\(\sigma_{max}\)</span> being the largest and smallest eigenvalues of matrix P.</p>
+<p>Thus, we can use property to choose the stabilizing control <span class="math inline">\(a_s\)</span> as: <span class="math display">\[\begin{equation}
+    a_s = \frac{\alpha \hat{k}}{\sigma_{min}^2}\hat{M}^{-1}\frac{s}{\|s\|} =
+    \rho \frac{s}{\|s\|}
+\end{equation}\]</span> where <span class="math inline">\(\sigma_{min}\)</span> is minimal singular value of <span class="math inline">\(M^{-1}\)</span> which provide: <span class="math display">\[\begin{equation}
+    \|s\|\|w\| - s^TKa_s \leq
+    \|s\|\|w\| - k \frac{\alpha}{\sigma^2_{min}\|s\|}s^TM^{-1}s \leq
+    \|s\|\|w\| - \alpha k \|s\|
+\end{equation}\]</span> but by definition <span class="math inline">\(k_{min} &lt; k &lt; k_{max}\)</span>, therefore <span class="math display">\[\begin{equation}
+    \|s\|\|w\| - \alpha k \|s\| \leq
+    \|s\|\|w\| - \alpha k_{min} \|s\| &lt; - \eta \|s\|
+\end{equation}\]</span> Setting gain <span class="math inline">\(\alpha\)</span> accordingly to: <span class="math display">\[\begin{equation}
+\alpha &gt; \frac{\|w\| + \eta}{k_{min}}
+\end{equation}\]</span> will satisfy sliding conditions.</p>
+</div>
+</section>
+<section id="references" class="slide level2 smaller scrollable">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-fossen:guidance" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">T. Fossen, <em>Guidance and control of ocean vehicles</em>. New York, NY: Wiley, 1995.</div>
+</div>
+<div id="ref-quat_smc" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">B. T. Lopez and J.-J. E. Slotine, <span>“Sliding on manifolds: Geometric attitude control with quaternions,”</span> in <em>2021 IEEE international conference on robotics and automation (ICRA)</em>, 2021, pp. 11140–11146. doi: <a href="https://doi.org/10.1109/ICRA48506.2021.9561867">10.1109/ICRA48506.2021.9561867</a>.</div>
+</div>
+<div id="ref-overview" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">L. Govinda, S. Tomas, M. Bandala, L. Nava Balanzar, R. Hernandez-Alvarado, and J. Antonio, <span>“Modelling, design and robust control of a remotely operated underwater vehicle,”</span> <em>International Journal of Advanced Robotic Systems</em>, vol. 11, p. 1, Jan. 2014, doi: <a href="https://doi.org/10.5772/56810">10.5772/56810</a>.</div>
+</div>
+<div id="ref-spong" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">M. W. Spong, <span>“On the robust control of robot manipulators,”</span> <em>IEEE Transactions on Automatic Control</em>, vol. 37, no. 11, pp. 1782–1786, 1992, doi: <a href="https://doi.org/10.1109/9.173151">10.1109/9.173151</a>.</div>
+</div>
+<div id="ref-slotine_applied" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">J. J. E. Slotine and W. Li, <em>Applied nonlinear control</em>. in Prentice-hall international editions. Prentice-Hall, 1991.</div>
+</div>
+<div id="ref-utkin_book" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">V. I. Utkin, <em>Sliding modes in control and optimization</em>. Springer Berlin Heidelberg, 1992. doi: <a href="https://doi.org/10.1007/978-3-642-84379-2">10.1007/978-3-642-84379-2</a>.</div>
+</div>
+</div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
@@ -1044,8 +1157,6 @@ List of primary sources and literature cited in the thesis. (Include detailed re
       }
     });
     </script>
-    <script>videojs(video_shortcode_videojs_video1);</script>
-    <script>videojs(video_shortcode_videojs_video2);</script>
     
 
 </body></html>
