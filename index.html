@@ -395,7 +395,7 @@ Simeon Nedelchev</div>
     </div>
 </div>
 
-  <p class="date">Jun 21, 2024</p>
+  <p class="date">Jul 11, 2024</p>
 </section>
 <section id="background" class="slide level2">
 <h2><strong>Background</strong></h2>
@@ -537,7 +537,7 @@ M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 </div><div class="column" style="width:30%;">
 <p>Properties:</p>
 <ol type="1">
-<li>SMC optimization</li>
+<li>Quadratic programming (QP) over SMC</li>
 <li><span style="color:red">Control input constraints</span></li>
 <li><span style="color:green">Relaxed sliding condition</span></li>
 <li><span style="color:blue">Smoothing</span></li>
@@ -605,20 +605,25 @@ M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 </div>
 </div>
 </section>
-<section id="position-tracking-performance-id" class="slide level2">
-<h2><strong>Position Tracking Performance (ID)</strong></h2>
+<section id="position-tracking.-inverse-dynamics" class="slide level2">
+<h2><strong>Position Tracking. Inverse dynamics</strong></h2>
 
 <img data-src="images/figures/id_pos.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>The ROV follows the trajectory but exhibits signiﬁcant error in the z direction and some stabilization oscillations.</p>
 </section>
-<section id="position-tracking-performance-sm" class="slide level2">
-<h2><strong>Position Tracking Performance (SM)</strong></h2>
+<section id="position-tracking.-pure-smc" class="slide level2">
+<h2><strong>Position Tracking. Pure SMC</strong></h2>
+
+<img data-src="images/figures/chattering.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Although the SMC does a better job of position stabilisation, the torques on the thrusters oscillate at a very high frequency.</p>
+</section>
+<section id="position-tracking.-smc-with-boundary-layer" class="slide level2">
+<h2><strong>Position Tracking. SMC with boundary layer</strong></h2>
 
 <img data-src="images/figures/sm_pos.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Sliding Mode (SM) control provides robust position tracking and handles nonlinearities and uncertainties better than the ID control system.</p>
 </section>
-<section id="position-tracking-performance-qp" class="slide level2">
-<h2><strong>Position Tracking Performance (QP)</strong></h2>
+<section id="position-tracking.-optimized-smc" class="slide level2">
+<h2><strong>Position Tracking. Optimized SMC</strong></h2>
 
-<img data-src="images/figures/qp_pos.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Optimized Sliding Mode (QP) optimizes control inputs for greater accuracy and eﬃciency.</p>
+<img data-src="images/figures/qp_pos.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Optimized Sliding Mode (RobustQP) optimizes control inputs for greater accuracy and eﬃciency.</p>
 </section>
 <section id="effect-from-disturbances" class="slide level2">
 <h2><strong>Effect from Disturbances</strong></h2>
@@ -639,9 +644,9 @@ M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 </div>
 </div>
 <ol type="a">
-<li><p>The ID control system maintains stability but exhibits larger deviations under signiﬁcant disturbances.</p></li>
-<li><p>The SM control system demonstrates enhanced robustness.</p></li>
-<li><p>The QP control system eﬀectively mitigates the eﬀects of disturbances.</p></li>
+<li><p>The Inverse Dynamics control system maintains stability but exhibits larger deviations under signiﬁcant disturbances.</p></li>
+<li><p>The Sliding Mode control system demonstrates enhanced robustness.</p></li>
+<li><p>The Optimized control system eﬀectively mitigates the eﬀects of disturbances.</p></li>
 </ol>
 </section>
 <section id="comparison-on-tracking-error" class="slide level2">
@@ -659,10 +664,10 @@ M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 </div>
 </div>
 </div>
-<p>Optimized Sliding Mode (QP) delivers the highest accuracy by optimizing control inputs and eﬀectively handling disturbances and nonlinearities.</p>
+<p>Optimized Sliding Mode (RobustQP) delivers the highest accuracy by optimizing control inputs and eﬀectively handling disturbances and nonlinearities.</p>
 </section>
-<section id="demo-video-qp-control" class="slide level2">
-<h2><strong>Demo video (QP control)</strong></h2>
+<section id="demo-video-robustqp-control" class="slide level2">
+<h2><strong>Demo video (RobustQP control)</strong></h2>
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="images/figures/qp_control.gif" class="quarto-figure quarto-figure-center"></p>
@@ -690,19 +695,10 @@ M \dot{v} + h(r, v) + \delta = B\phi_0(u) = B\nu \\
 <li>Hybrid Controls: Investigate integrating SMC with other advanced control methods.</li>
 </ul>
 </section>
-<section id="acknowledgments" class="slide level2">
-<h2><strong>Acknowledgments</strong></h2>
-<p>I would like to sincerely thank my thesis supervisor, Simeon Nedelchev, for his invaluable guidance and support throughout this work.</p>
-</section>
 <section>
 <section id="qa" class="title-slide slide level1 center">
 <h1><strong>Q&amp;A</strong></h1>
 <p>Thank you for your attention. Any questions?</p>
-</section>
-<section id="appendix-chattering-on-pure-smc" class="slide level2">
-<h2><strong>Appendix (chattering on pure SMC)</strong></h2>
-
-<img data-src="images/figures/chattering.jpeg" class="r-stretch quarto-figure quarto-figure-center"><p>Although the SMC does a better job of position stabilisation, the torques on the thrusters oscillate at a very high frequency.</p>
 </section>
 <section id="appendix-smc-theory.-part-1" class="slide level2">
 <h2><strong>Appendix (SMC theory. Part 1)</strong></h2>
